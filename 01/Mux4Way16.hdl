@@ -17,4 +17,13 @@ CHIP Mux4Way16 {
 
     PARTS:
     // Put your code here:
+
+    //using two stages of muxing
+    
+    //first select based on sel[1] - msb- (ie, a or c and b or d)
+    Mux16(a=a,b=c,sel=sel[1],out=muxac);
+    Mux16(a=b,b=d,sel=sel[1],out=muxbd);
+
+    //final stage using second sel bit - lsb
+    Mux16(a=muxac,b=muxbd,sel=sel[0],out=out);
 }
