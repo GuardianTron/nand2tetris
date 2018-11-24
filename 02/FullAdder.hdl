@@ -14,4 +14,16 @@ CHIP FullAdder {
 
     PARTS:
     // Put you code here:
+
+    /*
+     * Implementation: sum a and b, and pipe
+     * this sum to second half adder with c as the 
+     * second input.
+     * Produce carry by ORing  the resulting carries
+     */
+    HalfAdder(a=a,b=b,sum=sumAB,carry=carryAB);
+    HalfAdder(a=sumAB,b=c,sum=sum,carry=carryABC);
+    
+    Or(a=carryAB,b=carryABC,out=carry);
+
 }
