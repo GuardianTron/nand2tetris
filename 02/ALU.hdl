@@ -43,4 +43,42 @@ CHIP ALU {
 
     PARTS:
    // Put you code here:
+
+   //stage 1 - multiplex between input and second
+   //input tied to ground to zero out
+   Mux16(a=x,b[0..15]=false,sel=zx,out=zeroX);
+   Mux16(a=y,b[0..15]=false,sel=zy,out=zeroY);
+
+   //stage 2 - Negate inputs
+   //use XOR.  XOR will 
+   //pass input unaffected if n(var) is
+   //is false, but negate if 1
+   Xor16x1(a=zeroX,b=nx,out=notX);
+   Xor16x1(a=zeroY,b=ny,out=notY);
+
+   //stage3 - Send outputs from 
+   //second stage to the 16 bit adder 
+   // and the And16 and multiplex between output
+   Add16(a=notX,b=notY,out=sum);
+   And16(a=notX,b=notY,out=bitAnd);
+
+   Mux16(a=bitAnd,b=sum,sel=f,out=sumAnd);
+
+   //stage4 -- negate using XOR 
+
+   // trick similar to stage 2
+   Xor16x1(a=sumAnd,b=no,out[0..7]=lsb,out[8..15]=msb,out[15]=ng,out=out);
+
+  
+   //set flags
+
+   //use multiway ors to find out of zero
+   Or8Way(in=lsb,out=orLSB);
+   Or8Way(in=msb,out=orMSB);
+   Or(a=orLSB,b=orMSB,out=zor);
+   Not(in=zor,out=zr);
+
+
+
+
 }
