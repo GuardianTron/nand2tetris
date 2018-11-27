@@ -7,7 +7,7 @@ CHIP DMux8Way16{
     PARTS:
    	DMux8Way(a=a[0],b=b[0],c=c[0],d=d[0],e=e[0],f=f[0],g=g[0],h=h[0],sel=sel,in=in[0]);
 	DMux8Way(a=a[1],b=b[1],c=c[1],d=d[1],e=e[1],f=f[1],g=g[1],h=h[1],sel=sel,in=in[1]);
-	DMux8Way(a=a[2],b=b[2],c=c[2],d=d[2],e=e[2],f=f[2],g=g[2],h=h[2],sel=sel,in=in)[2];
+	DMux8Way(a=a[2],b=b[2],c=c[2],d=d[2],e=e[2],f=f[2],g=g[2],h=h[2],sel=sel,in=in[2]);
 	DMux8Way(a=a[3],b=b[3],c=c[3],d=d[3],e=e[3],f=f[3],g=g[3],h=h[3],sel=sel,in=in[3]);
 	DMux8Way(a=a[4],b=b[4],c=c[4],d=d[4],e=e[4],f=f[4],g=g[4],h=h[4],sel=sel,in=in[4]);
 	DMux8Way(a=a[5],b=b[5],c=c[5],d=d[5],e=e[5],f=f[5],g=g[5],h=h[5],sel=sel,in=in[5]);
