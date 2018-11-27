@@ -17,4 +17,42 @@ CHIP PC {
 
     PARTS:
     // Put your code here:
+
+    /** Two Multiplexers will control 
+     *  Pathway from the three possible load 
+     *  points, namely ground to reset, 
+     *  the external in bus for load, 
+     *  and the internal incrementor
+     *  The first two shall be determined
+     *  by the reset and load flags, 
+     *  and the multiplexers will default to 
+     *  passing along the incrementor should
+     *  load and reset both be false.
+     *
+     *  In order to trigger loading a value into the 
+     *  the register, all at least one of the flags must be
+     *  set.  Thus, even though the multiplexers
+     *  will send the incrementors output regardless of
+     *  INC's value if reset=load=0, the resgister
+     *  will only store the incremented value if 
+     *  INC is set.
+     */
+
+     //Determine whether or not store new value in register
+     Or(a=reset,b=load,out=rl);
+     Or(a=rl,b=inc,out=anyFlags);
+
+    //receive data from multiplexors, output
+    //to output bus and incrementor
+     Register(in=data,load=anyFlags,out=out,out=toInc);
+
+     //Give reseting top priority over increment and load
+     Mux16(a=fromIncIn,b=false,sel=reset,out=data);
+
+     //Give loading from bus priority over incremeting
+     Mux16(a=fromInc,b=in,sel=load,out=fromIncIn);
+
+     //increment value from register
+     Inc16(in=toInc,out=fromInc);
+
 }
