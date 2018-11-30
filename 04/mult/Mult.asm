@@ -11,16 +11,20 @@
 // via loop number of times specified
 // by multiplier
 
-//read in multiplier and save to new
-//memory location for processing
-@R1
-D=M
-@multiplier
-M=D
 
 //set up accumulator
 @product
 M=0
+
+//read in multiplier and save to new
+//memory location for processing
+//end if multiplier is zero
+@R1
+D=M
+@END
+D;JEQ
+@multiplier
+M=D
 
 //load multiplicand and 
 //end program to save if zero
@@ -30,6 +34,33 @@ D=M
 D;JEQ
 @multiplicand
 M=D
+
+//optimization
+//loop adds multiplicand to 
+//itself multiplier times.
+//If multiplier is larger than multiplicand
+//swap to reduce loop time
+@multiplier
+D=M
+@multiplicand
+D=D-M
+@MULT
+D;JLE
+//perform swap
+@multiplicand //save multiplicand
+D=M
+@temp 
+M=D
+@multiplier //set multiplicand to value of multiplier
+D=M
+@multiplicand 
+M=D
+@temp //set multiplier to old multiplicand value
+D=M
+@multiplier
+M=D
+
+
 
 //perform multiplication
 (MULT)
