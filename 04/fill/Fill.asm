@@ -32,9 +32,9 @@ M=-1
 //initialize rows
 @SCREEN
 D=A
-@32
+@8192
 D=D+A
-@rows
+@regs
 M=D
 
     (FILL)
@@ -43,19 +43,19 @@ M=D
     D=M
     
     //color appropriate row
-    @rows   
+    @regs   
     A=M 
     M=D 
 
     //continue filling until all 32 rows filled
-    @rows
+    @regs
     M=M-1
     @SCREEN
     D=A
-    @rows
+    @regs
     D=D-M
     @FILL
-    D;JLT
+    D;JLE
     
 
 
