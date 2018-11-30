@@ -7,3 +7,67 @@
 // (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)
 
 // Put your code here.
+// Add multiplicand to itself 
+// via loop number of times specified
+// by multiplier
+
+//read in multiplier and save to new
+//memory location for processing
+@R1
+D=M
+@multiplier
+M=D
+
+//set up accumulator
+@product
+M=0
+
+//perform multiplication
+(MULT)
+    //end if done multiplying - multiplier is zero
+    @multiplier
+    D=M
+    @END
+    D;JEQ
+
+    //perform multiplication
+    //fetch multiplicand
+    @multiplicand
+    D=M
+
+    //add multiplicand to product and save result to ram 
+    @product
+    M=D+M
+
+    //decremend multiplier
+    @multiplier
+    M=M-1
+
+    //loop
+    @MULT
+    0;JMP
+
+    
+
+
+
+
+
+//end program
+
+(END)
+    //save product to R2
+    @product
+    D=M
+    @R2
+    M=D 
+
+    //infinte loop to end
+    @END
+    0;JMP
+
+
+
+
+
+
