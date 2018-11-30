@@ -22,6 +22,15 @@ M=D
 @product
 M=0
 
+//load multiplicand and 
+//end program to save if zero
+@R0
+D=M
+@END
+D;JEQ
+@multiplicand
+M=D
+
 //perform multiplication
 (MULT)
     //end if done multiplying - multiplier is zero
@@ -61,9 +70,9 @@ M=0
     D=M
     @R2
     M=D 
-
+    (INFINITE)
     //infinte loop to end
-    @END
+    @INFINITE
     0;JMP
 
 
