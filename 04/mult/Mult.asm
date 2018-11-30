@@ -45,7 +45,7 @@ D=M
 @multiplicand
 D=D-M
 @MULT
-D;JLE
+D;JLT
 //perform swap
 @multiplicand //save multiplicand
 D=M
