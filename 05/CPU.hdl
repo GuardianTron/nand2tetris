@@ -57,7 +57,7 @@ CHIP CPU {
     //store the data on a C instruction, load logic will 
     //prevent it.
     //Register A will always output to address bus
-    Mux16(a=aluToA,b=instruction,sel=instruction[15],out=inputAReg);
+    Mux16(a=instruction,b=aluToA,sel=instruction[15],out=inputAReg);
 
     ARegister(in=inputAReg,load=loadA,out=fromAReg,out[0..14]=addressM,out=toPC);
     
