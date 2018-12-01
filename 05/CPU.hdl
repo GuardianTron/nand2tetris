@@ -40,4 +40,47 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+
+    //The A Register should be loaded
+    //if we are receiving a A instruction
+    //or if we are receiving a C instruction
+    //and the destination include Register All
+    //Note (~A or (A and B) == ~A or B)
+    Not(in=instruction[15],out=isAInstruction);
+    Or(a=isAInstruction,b=instruction[5],out=loadA);
+
+    //Determining the source of the input for A Register
+    //ARegister only holds data which comes from the ALU
+    //or A type instructions. Only load from instruction
+    //bus from A instructions.  Route data from C instruction
+    //from ALU to A register.  If A register is not to 
+    //store the data on a C instruction, load logic will 
+    //prevent it.
+    Mux16(a=aluToA,b=instruction,sel=instruction[15],out=inputAReg);
+
+    ARegister(in=inputAReg,load=loadA,out=fromAReg);
+    
+    //loading must result from C instruction
+    //with a destination that includes D.
+    //Otherwise, an a instruction with a RAM
+    //address containing a 1 in the proper bit could 
+    //accidentally trigger a load
+    //NOTE:All inputs come to d 
+    //through the ALU. No direct connections
+    //to Areg or memory
+
+    And(a=instruction[15],b=instruction[4],out=loadD);
+    DRegister(in=aluToD,load=loadD,out=dToALU);
+
+
+    //The ALU's input will receive instructions directly
+    //from the instruction bus and will always assume that 
+    //instruction given is a C instruction.
+    //With A instructions, this will result in nonsense, but
+    //this will not matter as all other memory units will 
+    //only latch on aC instruction.
+
+
+
+
 }
