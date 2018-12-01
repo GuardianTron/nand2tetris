@@ -32,11 +32,11 @@ CHIP Memory {
     //determine which whether screen or ram is 
     //supposed to receive load instruction.
     DMux(in=load,sel=address[14],a=loadRam,b=loadScreen);
-;
+
         
     //Wire input to screen and 
     //regular RAM
-    RAM16k(in=in,load=loadRam,address=address[0..13],out=fromRam);
+    RAM16K(in=in,load=loadRam,address=address[0..13],out=fromRam);
     Screen(in=in,load=loadScreen,address=address[0..12],out=fromScreen);
     Keyboard(out=fromKbd);   
 
