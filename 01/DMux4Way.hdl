@@ -17,20 +17,13 @@ CHIP DMux4Way {
 
     PARTS:
     // Put your code here:
-
-    Not(in=sel[0],out=not0);
-    Not(in=sel[1],out=not1);
-
-    //create numbers from binary
-    And(a=not1,b=not0,out=zero);
-    And(a=not1,b=sel[0],out=one);
-    And(a=sel[1],b=not0,out=two);
-    And(a=sel[1],b=sel[0],out=three);
-
-   //selection for outputs
-   And(a=in,b=zero,out=a);
-   And(a=in,b=one,out=b);
-   And(a=in,b=two,out=c);
-   And(a=in,b=three,out=d);
+    //Split data between first dmuxer based on msb
+    //then split based on lsb
+    //NOTE: after first stage, one output
+    //will be zero, thus both it's receiver's 
+    //outputs will be zero
+    DMux(in=in,sel=sel[1],a=ab,b=cd);
+    DMux(in=ab,sel=sel[0],a=a,b=b);
+    DMux(in=cd,sel=sel[0],a=c,b=d);
 
 }
