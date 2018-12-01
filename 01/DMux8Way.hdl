@@ -17,38 +17,9 @@ CHIP DMux8Way {
 
     PARTS:
     // Put your code here:
-    //inputs to ands will follow conventions
-    //of using rightmost operand as lsb
-
-    Not(in=sel[0],out=not0);
-    Not(in=sel[1],out=not1);
-    Not(in=sel[2],out=not2);
-
-    //for simplicty, create numbers representing results
-
-    //2 bit nubers - lsb
-    And(a=not1,b=not0,out=zero2b);
-    And(a=not1,b=sel[0],out=one2b);
-    And(a=sel[1],b=not0,out=two2b);
-    And(a=sel[1],b=sel[0],out=three2b);
-
-    //3 bit numbers
-    And(a=not2,b=zero2b,out=zero);
-    And(a=not2,b=one2b,out=one);
-    And(a=not2,b=two2b,out=two);
-    And(a=not2,b=three2b,out=three);
-    And(a=sel[2],b=zero2b,out=four);
-    And(a=sel[2],b=one2b,out=five);
-    And(a=sel[2],b=two2b,out=six);
-    And(a=sel[2],b=three2b,out=seven);
-
-    //perform selections
-    And(a=in,b=zero,out=a);
-    And(a=in,b=one,out=b);
-    And(a=in,b=two,out=c);
-    And(a=in,b=three,out=d);
-    And(a=in,b=four,out=e);
-    And(a=in,b=five,out=f);
-    And(a=in,b=six,out=g);
-    And(a=in,b=seven,out=h);
+    //Split input using a single DMux based on msb
+    //Then use four way DMux to finish the Split
+    DMux(in=in,sel=sel[2],a=abcd,b=efgh);
+    DMux4Way(in=abcd,sel=sel[0..1],a=a,b=b,c=c,d=d);
+    DMux4Way(in=efgh,sel=sel[0..1],a=e,b=f,c=g,d=h);
 }
