@@ -56,9 +56,10 @@ CHIP CPU {
     //from ALU to A register.  If A register is not to 
     //store the data on a C instruction, load logic will 
     //prevent it.
+    //Register A will always output to address bus
     Mux16(a=aluToA,b=instruction,sel=instruction[15],out=inputAReg);
 
-    ARegister(in=inputAReg,load=loadA,out=fromAReg);
+    ARegister(in=inputAReg,load=loadA,out=fromAReg,out[0..14]=addressM);
     
     //loading must result from C instruction
     //with a destination that includes D.
@@ -68,6 +69,7 @@ CHIP CPU {
     //NOTE:All inputs come to d 
     //through the ALU. No direct connections
     //to Areg or memory
+    
 
     And(a=instruction[15],b=instruction[4],out=loadD);
     DRegister(in=aluToD,load=loadD,out=fromDReg);
