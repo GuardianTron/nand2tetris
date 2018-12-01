@@ -66,11 +66,9 @@ CHIP ALU {
 
    Mux16(a=bitAnd,b=sum,sel=f,out=sumAnd);
 
-   //stage4 -- negate using XOR 
-
-   // trick similar to stage 2
-   Xor16x1(a=sumAnd,b=no,out[0..7]=lsb,out[8..15]=msb,out[15]=ng,out=out);
-
+   //stage4 -- negate output and output if selected
+    Not16(in=sumAnd,out=notOut);
+    Mux16(a=sumAnd,b=notOut,sel=no,out[0..7]=lsb,out[8..15]=msb,out[15]=ng,out=out);
   
    //set flags
 
