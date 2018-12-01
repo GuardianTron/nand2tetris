@@ -59,7 +59,7 @@ CHIP CPU {
     //Register A will always output to address bus
     Mux16(a=aluToA,b=instruction,sel=instruction[15],out=inputAReg);
 
-    ARegister(in=inputAReg,load=loadA,out=fromAReg,out[0..14]=addressM);
+    ARegister(in=inputAReg,load=loadA,out=fromAReg,out[0..14]=addressM,out=toPC);
     
     //loading must result from C instruction
     //with a destination that includes D.
@@ -92,11 +92,48 @@ CHIP CPU {
 
     ALU(x=fromDReg,y=fromAMReg,zx=instruction[11],nx=instruciton[10],
         zy=instruction[9],ny=instruction[8],f=instruction[7],
-        no=instruction[6],out=outM,out=aluToD,out=aluToA);
+        no=instruction[6],zr=zr,ng=ng,out=outM,out=aluToD,out=aluToA);
 
     //only activate memory latch flag on a C instruction
     //where the destination includes the memory
     And(a=instruction[15],b=instruction[3],out=writeM); 
+
+    //handle jump instructons
+    //loading only occurs either when jump condition
+    //as been met and the instruction is a C
+    //To meet a jump when specified, only one of the 
+    //three instruction flags and it's corresponding condition
+    //must be true
+    //Note: if Reset is true, PC will automatically ignore
+    //load and inc, so do not worry about testing for load
+
+    //calculate jumps 
+    
+    //calculate gt 0
+    Not(in=zr,out=notZr);
+    Not(in=ng,out=notNg);
+    And(a=notZr,b=notNg,out=notZN);
+    And(a=instruction[0],b=notZN,out=greater);
+
+    //calculate eq 0
+    And(a=instruction[1],b=zr,out=equal);
+
+    //calculate lt 0
+    And(a=instruction[2],b=ng,out=less);
+
+    //ensure jump condition met
+    Or(a=greater,b=equal,out=gte);
+    Or(a=gte,b=less,out=jumpMet);
+
+    //only jump ifand is a c instruction
+    And(a=jumpMet,b=instruction[15],out=jump);
+
+
+    //reset will superced load and inc, and inc
+    //will be superceded by both by PC's design
+    //Thus, setting inc to true will have no effect
+    //if the either of the other condistion are true
+    PC(in=toPC,reset=reset,load=jump,inc=true,out[0..14]=pc);
 
 
 
