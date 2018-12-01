@@ -94,7 +94,9 @@ CHIP CPU {
         zy=instruction[9],ny=instruction[8],f=instruction[7],
         no=instruction[6],out=outM,out=aluToD,out=aluToA);
 
-    
+    //only activate memory latch flag on a C instruction
+    //where the destination includes the memory
+    And(a=instruction[15],b=instruction[3],out=writeM); 
 
 
 
