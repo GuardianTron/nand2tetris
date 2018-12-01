@@ -70,16 +70,29 @@ CHIP CPU {
     //to Areg or memory
 
     And(a=instruction[15],b=instruction[4],out=loadD);
-    DRegister(in=aluToD,load=loadD,out=dToALU);
+    DRegister(in=aluToD,load=loadD,out=fromDReg);
 
 
+    
+    //Route data to ALU from A register when 
+    //instruction[12] is low, from memory when 
+    //high.  ALU will treat all instructions as 
+    //C instructions.  If instruction is A instruction
+    //memory units will simply not latch the output.
+    Mux16(a=fromAReg,b=inM,sel=instruction[12],out=fromAMReg);
+    
     //The ALU's input will receive instructions directly
     //from the instruction bus and will always assume that 
     //instruction given is a C instruction.
     //With A instructions, this will result in nonsense, but
     //this will not matter as all other memory units will 
-    //only latch on aC instruction.
+    //only latch on a C instruction.
 
+    ALU(x=fromDReg,y=fromAMReg,zx=instruction[11],nx=instruciton[10],
+        zy=instruction[9],ny=instruction[8],f=instruction[7],
+        no=instruction[6],out=outM,out=aluToD,out=aluToA);
+
+    
 
 
 
