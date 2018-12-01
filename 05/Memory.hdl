@@ -29,17 +29,24 @@ CHIP Memory {
     PARTS:
     // Put your code here:
 
-    //determine which if either portion
-    //of memory gets data loaded into it
-    //based on msb of address
-    DMux(in=address[14],a=isRamAddr,b=isScreenAddr]);
-    And(a=isRamAddr,b=load,out=loadRam);
-    And(a=isScreenAddr,b=load,out=loadScreen);
+    //determine which whether screen or ram is 
+    //supposed to receive load instruction.
+    DMux(in=load,sel=address[14],a=loadRam,b=loadScreen);
+;
         
     //Wire input to screen and 
     //regular RAM
     RAM16k(in=in,load=loadRam,address=address[0..13],out=fromRam);
     Screen(in=in,load=loadScreen,address=address[0..12],out=fromScreen);
     Keyboard(out=fromKbd);   
+
+    //use second msb of address to 
+    //select between keyboard and 
+    //screen for output
+    Mux16(a=fromScreen,b=fromKbd,sel=address[13],out=fromPeripherals);
+    
+    //select between ram and peripherals 
+    //for output based on msb
+    Mux16(a=fromRam,b=fromPeripherals,sel=address[14],out=out);
 
 }
