@@ -28,4 +28,15 @@ CHIP Memory {
 
     PARTS:
     // Put your code here:
+
+    //determine which if either portion
+    //of memory gets data loaded into it
+    //based on msb of address
+    DMux(in=address[14,a=isRamAddr,b=isScreenAddr]);
+    And(a=isRamAddr,b=load,out=loadRam);
+    And(a=isScreenAddr,b=load,out=loadScreen);
+        
+    //Wire input to screen and 
+    //regular RAM
+
 }
