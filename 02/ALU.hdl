@@ -50,11 +50,13 @@ CHIP ALU {
    Mux16(a=y,b[0..15]=false,sel=zy,out=zeroY);
 
    //stage 2 - Negate inputs
-   //use XOR.  XOR will 
-   //pass input unaffected if n(var) is
-   //is false, but negate if 1
-   Xor16x1(a=zeroX,b=nx,out=notX);
-   Xor16x1(a=zeroY,b=ny,out=notY);
+   //Use Mux16 to to choose between
+   //output from stage one and negaged output
+   //from state one
+    Not16(in=zeroX,out=negX);
+    Not16(in=zeroY,out=negY);
+    Mux16(a=zeroX,b=negX,sel=nx,out=notX);
+    Mux16(a=zeroY,b=negY,sel=ny,out=notY);
 
    //stage3 - Send outputs from 
    //second stage to the 16 bit adder 
