@@ -32,11 +32,14 @@ CHIP Memory {
     //determine which if either portion
     //of memory gets data loaded into it
     //based on msb of address
-    DMux(in=address[14,a=isRamAddr,b=isScreenAddr]);
+    DMux(in=address[14],a=isRamAddr,b=isScreenAddr]);
     And(a=isRamAddr,b=load,out=loadRam);
     And(a=isScreenAddr,b=load,out=loadScreen);
         
     //Wire input to screen and 
     //regular RAM
+    RAM16k(in=in,load=loadRam,address=address[0..13],out=fromRam);
+    Screen(in=in,load=loadScreen,address=address[0..12],out=fromScreen);
+    Keyboard(out=fromKbd);   
 
 }
