@@ -1,6 +1,10 @@
 
 class Parser:
 
+    LABEL = 0
+    A_INSTRUCTION = 1
+    C_INSTRUCTION = 2
+
     def __init__(self,path):
         #load the file
         #pass exception to caller
