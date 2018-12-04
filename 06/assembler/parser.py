@@ -1,6 +1,7 @@
 
 class Parser:
 
+    IGNORE = -1
     LABEL = 0
     A_INSTRUCTION = 1
     C_INSTRUCTION = 2
@@ -15,16 +16,42 @@ class Parser:
         #used for keeping track of the line being parsed
         self.line_number=0
         self.processed = []
+
     
+    #returns the address of the last instruction processed
+    @property
+    def current_address(self):
+        return len(self.processed) - 1
+
+    
+
+    @property 
+    def current_instruction(self):
+        return self.processed[self.current_address]
+    
+    #parse the line and return the type of instruction found
     def parseLine(self):
         self.line = self.file[self.line_number]
         self.line_number+=1
          #strip comments
+        
         if self.stripComments() == 0:
-             return
+             return Parser.IGNORE
+
+        #return the type of command found
+        if self.line[0] == '(':
+            instruction_type = Parser.LABEL
+        elif self.line[0] == '@':
+            instruction_type = Parser.A_INSTRUCTION
+        else:
+            instruction_type = Parser.C_INSTRUCTION
+
+
        
         #save processed file for debugging
         self.processed.append(self.line)
+
+        return instruction_type
 
 
     def parse(self):
