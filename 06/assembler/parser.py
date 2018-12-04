@@ -14,19 +14,17 @@ class Parser:
        
         #used for keeping track of the line being parsed
         self.line_number=0
+        #holds processed instructions
+        #instructions are stored in tuples as (type,instructions)
+        #C-instuctions are further broken down into a sub tuple
+        #(destination, operation, jump)
         self.processed = []
-
-    
-    #returns the address of the last instruction processed
-    @property
-    def current_address(self):
-        return len(self.processed) - 1
 
     
     #returns the current instruction
     @property 
     def current_instruction(self):
-        return self.processed[self.current_address][1]
+        return self.processed[len(self.processed)-1][1]
 
     #returns true if the file has been fully processed
     @property
