@@ -21,7 +21,7 @@ class Parser:
        
         #save processed file for debugging
         self.processed.append(self.line)
-        
+
 
     def parse(self):
         while self.line_number < len(self.file):
