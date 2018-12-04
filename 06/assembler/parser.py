@@ -16,17 +16,9 @@ class Parser:
         self.line = self.file[self.line_number]
         self.line_number+=1
          #strip comments
-        self.stripWhiteSpace()
-        comment = self.line.find("//")
-        if comment==0: #whole line is a comment so skip
-            return
-        elif comment > 0:
-            #remove comment
-            self.line = self.line[0:comment]
-        
-        self.stripWhiteSpace()
-        if len(self.line)==0:    # line is empty
-            return
+        if self.stripComments() == 0:
+             return
+       
         #save processed file for debugging
         self.processed.append(self.line)
         
@@ -38,3 +30,18 @@ class Parser:
 
     def stripWhiteSpace(self):
         self.line = self.line.replace('\n','').replace('\r','').strip()
+
+    #returns length command string left after comments and white space
+    #are removed.
+    def stripComments(self):
+        self.stripWhiteSpace()
+        comment = self.line.find("//")
+        if comment==0: #whole line is a comment so skip
+            return 0
+        elif comment > 0:
+            #remove comment
+            self.line = self.line[0:comment]
+        
+        self.stripWhiteSpace()
+        return len(self.line)
+        
