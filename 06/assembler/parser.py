@@ -11,8 +11,7 @@ class Parser:
         #pass exception to caller
         with open(path) as f:
             self.file = f.readlines()
-        #initialize the tracking of instruction numbers
-        self.instruction_number=0
+       
         #used for keeping track of the line being parsed
         self.line_number=0
         self.processed = []
@@ -28,6 +27,11 @@ class Parser:
     @property 
     def current_instruction(self):
         return self.processed[self.current_address]
+
+    #returns true if the file has been fully processed
+    @property
+    def complete(self):
+        return len(self.file) == self.line_number
     
     #parse the line and return the type of instruction found
     def parseLine(self):
