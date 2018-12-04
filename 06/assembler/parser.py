@@ -1,3 +1,4 @@
+
 class Parser:
 
     def __init__(self,path):
@@ -5,7 +6,3 @@ class Parser:
         #pass exception to caller
         with open(path) as f:
             self.file = f.readlines()
-    end
-
-
-end
