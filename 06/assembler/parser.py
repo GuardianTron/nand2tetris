@@ -23,7 +23,7 @@ class Parser:
         return len(self.processed) - 1
 
     
-
+    #returns the current instruction
     @property 
     def current_instruction(self):
         return self.processed[self.current_address]
@@ -37,23 +37,28 @@ class Parser:
     def parseLine(self):
         self.line = self.file[self.line_number]
         self.line_number+=1
+        
          #strip comments
         
         if self.stripComments() == 0:
              return Parser.IGNORE
 
         #return the type of command found
+        #also parse it
         if self.line[0] == '(':
             instruction_type = Parser.LABEL
+            instruction = self.line.replace('(','').replace(')','')
         elif self.line[0] == '@':
             instruction_type = Parser.A_INSTRUCTION
+            instruction = self.line[1:]
         else:
             instruction_type = Parser.C_INSTRUCTION
+            instruction = self.line
 
 
        
         #save processed file for debugging
-        self.processed.append(self.line)
+        self.processed.append((instruction_type,instruction))
 
         return instruction_type
 
