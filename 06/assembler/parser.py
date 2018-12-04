@@ -53,7 +53,7 @@ class Parser:
             instruction = self.line[1:]
         else:
             instruction_type = Parser.C_INSTRUCTION
-            instruction = self.line
+            instruction = self.parseC()
 
 
        
@@ -84,4 +84,30 @@ class Parser:
         
         self.stripWhiteSpace()
         return len(self.line)
+
+    #break c instructions into components and return tuple
+    #(destination, operation,jump)
+    #if field is missing, it will be filled
+    #with a null string
+    def parseC(self):
+        destination = ''
+        operation = ''
+        jump = ''
+
+        #destination only present if equal sign present
+        splitup = self.line.split("=")
+        if len(splitup) == 2:
+            destination = splitup[0]
+            splitup = splitup[1]
+        else:
+            splitup = splitup[0]
+        
+        #jump present only if ; present
+        splitup = splitup.split(";")
+        operation = splitup[0]
+        if len(splitup) == 2:
+            jump = splitup[1]
+        
+        #return tuple
+        return (destination,operation,jump)
         
