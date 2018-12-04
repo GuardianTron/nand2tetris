@@ -26,7 +26,7 @@ class Parser:
     #returns the current instruction
     @property 
     def current_instruction(self):
-        return self.processed[self.current_address]
+        return self.processed[self.current_address][1]
 
     #returns true if the file has been fully processed
     @property
@@ -37,7 +37,7 @@ class Parser:
     def parseLine(self):
         self.line = self.file[self.line_number]
         self.line_number+=1
-        
+
          #strip comments
         
         if self.stripComments() == 0:
