@@ -1,6 +1,10 @@
+from parser import Instruction
 class BinaryEncoder:
 
     def __init__(self):
+
+        #set up array to hold binary values
+        self.bin = []
         
         #define c instruction symbols
         self.__jmp = {
@@ -73,9 +77,23 @@ class BinaryEncoder:
 
         return bin_text
             
-    def encodeC(self,instruction):
+    def encodeC(self,operation):
         text = '111' #all c instructions start with this
-        text += self.__dest[instruction[0]]
-        text += self.__op[instruction[1]]
-        text += self.__jmp[instruction[2]]
+        text += self.__op[operation[1]]
+        text += self.__dest[operation[0]]
+        text += self.__jmp[operation[2]]
         return text
+
+    def encodeInstruction(self,instruction):
+        if instruction.instruction_type == Instruction.A_INSTRUCTION:
+            return self.encodeA(instruction.payload)
+        elif instruction.instruction_type == Instruction.C_INSTRUCTION:
+            return self.encodeC(instruction.payload)
+        #is a label so had no code.
+        return None
+
+    def encodeAll(self,instructions):
+        for inst in instructions:
+            binary = self.encodeInstruction(inst)
+            if binary is not None:
+                self.bin.append(binary)
