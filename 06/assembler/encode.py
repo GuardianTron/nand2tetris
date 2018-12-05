@@ -97,3 +97,22 @@ class BinaryEncoder:
             binary = self.encodeInstruction(inst)
             if binary is not None:
                 self.bin.append(binary)
+                
+class SymbolTable:
+
+    def __init__(self):
+        #predefined symbols
+        self.table ={
+            'SP':'0',
+            'LCL':'1',
+            'ARG':'2',
+            'THIS':'3',
+            'THAT':'4',
+            'SCREEN':'16384',
+            'KBD':'24576'
+        }
+
+        #add R0-R15
+        for i in range(0,15):
+            self.table["R%d"%(i)]=i
+    
