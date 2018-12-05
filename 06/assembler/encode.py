@@ -1,10 +1,22 @@
 from parser import Instruction
 class BinaryEncoder:
 
-    def __init__(self):
+    def __init__(self,symbol_table):
 
         #set up array to hold binary values
         self.bin = []
+
+        #holds symbols
+        self.__symbols = symbol_table
+
+        #contains memory address for next
+        #user defined symbol
+        #@todo...add core to ensure that address 
+        #does not go above RAM limit
+        self.__mem_address = 16
+
+        #max ram address 
+        self.__max_address = 16383
         
         #define c instruction symbols
         self.__jmp = {
@@ -61,9 +73,28 @@ class BinaryEncoder:
 
         }
 
+    def __getAddressInteger(self,address):
+         #if user defined symbol, 
+        #replace with memory address
+        if not address.isdigit():
+            #add new symbol if not already present
+            if address not in self.__symbols:
+
+                #rais error is memory address larger than data ram
+                if self.__mem_address >= self.__max_address:
+                    raise Exception("Maximum data ram limit reached")
+                self.__symbols[address] = str(self.__mem_address)
+                self.__mem_address += 1
+            #translate symbol
+            address = self.__symbols[address]
+
+        return int(address)
+
+
     def encodeA(self,address):
+
         
-        address_int = int(address)
+        address_int = self.__getAddressInteger(address)
         #convert integer address to 16 bit text a instruction
         bin_text = ''
         while(address_int):
@@ -113,6 +144,6 @@ class SymbolTable:
         }
 
         #add R0-R15
-        for i in range(0,15):
+        for i in range(0,16):
             self.table["R%d"%(i)]=i
     

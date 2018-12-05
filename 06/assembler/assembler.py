@@ -9,27 +9,25 @@ path = sys.argv[1]
 try:
     p = Parser(path)
     p.parse()
-    b = BinaryEncoder()
-    b.encodeAll(p.processed)
+    sym = SymbolTable().table
+    b = BinaryEncoder(sym)
 
 
     #add labels to the symbol table
-    sym = SymbolTable().table
+    
     curr_address = 0
     for inst in p.processed:
         #only increment address for actual instructions
         if inst.instruction_type == Instruction.LABEL:
             #add if not in symbol table
             if inst.payload not in sym:
-                sym[inst.payload] = curr_address
+                sym[inst.payload] = str(curr_address)
         else:
             #not a label, so move on to next address
             curr_address += 1
-                
 
-
-
-    
+    #encode into binary
+    b.encodeAll(p.processed)
     #save compiled hack file
     path = path.replace('.asm','')+'.hack'
     with open(path,'w') as f:
