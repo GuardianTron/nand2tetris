@@ -1,5 +1,30 @@
 class BinaryEncoder:
 
+    def __init__(self):
+        
+        #define c instruction symbols
+        self.__jmp = {
+            "":'000',
+            'JGT':'001',
+            'JEQ':'010',
+            'JLT':'100',
+            'JGE':'011',
+            'JLE':'110',
+            'JNE':'101',
+            'JMP':'111'
+        }
+
+        self.__dest = {
+            '':'000',
+            'M':'001',
+            'D':'010',
+            'A':'100',
+            'MD':'011',
+            'AM':'101',
+            'AD':'110',
+            'AMD':'111'
+        }
+
     def encodeA(self,address):
         
         address_int = int(address)
