@@ -1,5 +1,5 @@
 import sys
-from parser import Parser
+from parser import Parser,Instruction
 
 if(len(sys.argv) < 2):
     print("The assembler requires the name of the asm file to be compiled.")
@@ -15,8 +15,10 @@ except IOError as e:
 
 else:
     p.parse()
+    print("Processed lines: %d"%(len(p.processed)))
     for i in p.processed:
-        print(str(i))
+        print(i)
+    
 
 finally:
     exit()

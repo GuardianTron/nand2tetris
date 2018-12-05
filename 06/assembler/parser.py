@@ -44,19 +44,19 @@ class Parser:
         #return the type of command found
         #also parse it
         if self.line[0] == '(':
-            instruction_type = Parser.LABEL
+            instruction_type = Instruction.LABEL
             instruction = self.line.replace('(','').replace(')','')
         elif self.line[0] == '@':
-            instruction_type = Parser.A_INSTRUCTION
+            instruction_type = Instruction.A_INSTRUCTION
             instruction = self.line[1:]
         else:
-            instruction_type = Parser.C_INSTRUCTION
+            instruction_type = Instruction.C_INSTRUCTION
             instruction = self.parseC()
 
 
        
         #save processed file for debugging
-        self.processed.append((instruction_type,instruction))
+        self.processed.append(Instruction(self.line_number,instruction_type,instruction))
 
         return instruction_type
 
@@ -109,3 +109,38 @@ class Parser:
         #return tuple
         return (destination,operation,jump)
         
+
+#Data structure to make code cleaner
+#and provide constants
+class Instruction:
+
+    LABEL = 0
+    A_INSTRUCTION = 1
+    C_INSTRUCTION = 2
+
+    def __init__(self,line_number,inst_type,instruction):
+        self.__line_number = line_number
+        self.__input = instruction
+        self.__type = inst_type
+    
+    @property
+    def line_number(self):
+        return self.__line_number
+
+    @property
+    def payload(self):
+        
+        return self.__input
+
+    @property
+    def instruction_type(self):
+        return self.__type
+
+    def __str__(self):
+        ret_string = "Line: %.5f\tType: %d \t%s"%(self.line_number,self.instruction_type,self.payload)
+        
+        return ret_string
+
+      
+
+    
