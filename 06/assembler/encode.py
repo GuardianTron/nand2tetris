@@ -73,5 +73,9 @@ class BinaryEncoder:
 
         return bin_text
             
-
-
+    def encodeC(self,instruction):
+        text = '111' #all c instructions start with this
+        text += self.__dest[instruction[0]]
+        text += self.__op[instruction[1]]
+        text += self.__jmp[instruction[2]]
+        return text
