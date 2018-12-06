@@ -127,7 +127,7 @@ class BinaryEncoder:
             elif instruction.payload['op'] not in self.__op:
                 raise SyntaxError(instruction.line_number,instruction.line,"%s is not a valid operation."%(instruction.payload['op']))
             elif instruction.payload['jmp'] not in self.__jmp:
-                raise SyntaxError(instruction.line_number,instruction.line,"%s is not a valid jump instruction."%(instruction.payload['jump']))
+                raise SyntaxError(instruction.line_number,instruction.line,"%s is not a valid jump instruction."%(instruction.payload['jmp']))
             
             return self.encodeC(instruction.payload)
         #is a label so had no code.
