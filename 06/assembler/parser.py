@@ -1,4 +1,5 @@
-
+from errors import SyntaxError
+import re
 class Parser:
 
     IGNORE = -1
@@ -44,6 +45,9 @@ class Parser:
         #return the type of command found
         #also parse it
         if self.line[0] == '(':
+            #error checks
+            if self.line[-1] != ')':
+                raise SyntaxError(self.line_number,self.line,' Pseudo Commands must end with a \')\' ')
             instruction_type = Instruction.LABEL
             instruction = self.line.replace('(','').replace(')','')
         elif self.line[0] == '@':
@@ -65,6 +69,11 @@ class Parser:
         while self.line_number < len(self.file):
             self.parseLine()
 
+    #makes sure text starts with a non-digit and 
+    #consists only of numbers, letters, _,$,.,and :
+    def __verifyLabel(self,text):
+        regex = re.compile("^(\w|[.$:])+$")
+        return not text[0].isdigit() and regex.search(text)
 
     def stripWhiteSpace(self):
         self.line = self.line.replace('\n','').replace('\r','').strip()
