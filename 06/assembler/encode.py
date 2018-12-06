@@ -110,9 +110,9 @@ class BinaryEncoder:
             
     def encodeC(self,operation):
         text = '111' #all c instructions start with this
-        text += self.__op[operation[1]]
-        text += self.__dest[operation[0]]
-        text += self.__jmp[operation[2]]
+        text += self.__op[operation['op']]
+        text += self.__dest[operation['dest']]
+        text += self.__jmp[operation['jmp']]
         return text
 
     def encodeInstruction(self,instruction):

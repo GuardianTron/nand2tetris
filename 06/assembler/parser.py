@@ -106,8 +106,8 @@ class Parser:
         if len(splitup) == 2:
             jump = splitup[1]
         
-        #return tuple
-        return (destination,operation,jump)
+        #return dictionary
+        return {'dest':destination,'op':operation,'jmp':jump}
         
 
 #Data structure to make code cleaner
