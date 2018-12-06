@@ -56,7 +56,7 @@ class Parser:
 
        
         #save processed file for debugging
-        self.processed.append(Instruction(self.line_number,instruction_type,instruction))
+        self.processed.append(Instruction(self.line_number,self.line,instruction_type,instruction))
 
         return instruction_type
 
