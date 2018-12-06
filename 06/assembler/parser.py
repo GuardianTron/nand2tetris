@@ -61,10 +61,11 @@ class Parser:
             instruction_type = Instruction.A_INSTRUCTION
             instruction = self.line[1:]
             #verify that it is numeric or a valid label
-            if not instruction.isdigit and not self.__verifyLabel(instruction):
+            if not instruction.isdigit() and not self.__verifyLabel(instruction):
                 raise SyntaxError(self.line_number,self.line,'A instructions must be either a positive integer or a valid label.')
 
         else:
+            #error handling 
             instruction_type = Instruction.C_INSTRUCTION
             instruction = self.parseC()
 
