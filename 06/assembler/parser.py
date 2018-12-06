@@ -118,8 +118,9 @@ class Instruction:
     A_INSTRUCTION = 1
     C_INSTRUCTION = 2
 
-    def __init__(self,line_number,inst_type,instruction):
+    def __init__(self,line_number,line,inst_type,instruction):
         self.__line_number = line_number
+        self.__line = line
         self.__input = instruction
         self.__type = inst_type
     
@@ -127,6 +128,10 @@ class Instruction:
     def line_number(self):
         return self.__line_number
 
+    @property
+    def line(self):
+        return self__line
+    
     @property
     def payload(self):
         
