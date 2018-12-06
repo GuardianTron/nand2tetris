@@ -48,11 +48,22 @@ class Parser:
             #error checks
             if self.line[-1] != ')':
                 raise SyntaxError(self.line_number,self.line,' Pseudo Commands must end with a \')\' ')
-            instruction_type = Instruction.LABEL
+            #remove parenthesis
             instruction = self.line.replace('(','').replace(')','')
+            instruction_type = Instruction.LABEL
+            
+            #verify that the label is validly formatted
+            if not self.__verifyLabel(instruction):
+                raise SyntaxError(self.line_number,self.line,'Invalid label')
+
+
         elif self.line[0] == '@':
             instruction_type = Instruction.A_INSTRUCTION
             instruction = self.line[1:]
+            #verify that it is numeric or a valid label
+            if not instruction.isdigit and not self.__verifyLabel(instruction):
+                raise SyntaxError(self.line_number,self.line,'A instructions must be either a positive integer or a valid label.')
+
         else:
             instruction_type = Instruction.C_INSTRUCTION
             instruction = self.parseC()
