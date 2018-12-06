@@ -1,4 +1,5 @@
 from parser import Instruction
+from errors import SyntaxError
 class BinaryEncoder:
 
     def __init__(self,symbol_table):
@@ -109,6 +110,7 @@ class BinaryEncoder:
         return bin_text
             
     def encodeC(self,operation):
+
         text = '111' #all c instructions start with this
         text += self.__op[operation['op']]
         text += self.__dest[operation['dest']]
@@ -119,6 +121,14 @@ class BinaryEncoder:
         if instruction.instruction_type == Instruction.A_INSTRUCTION:
             return self.encodeA(instruction.payload)
         elif instruction.instruction_type == Instruction.C_INSTRUCTION:
+            #perform errors checking
+            if instruction.payload['dest'] not in self.__dest:
+                raise SyntaxError(instruction.line_number,instruction.line,"%s is not a valid destination."%(instruction.payload['dest']))
+            elif instruction.payload['op'] not in self.__op:
+                raise SyntaxError(instruction.line_number,instruction.line,"%s is not a valid operation."%(instruction.payload['op']))
+            elif instruction.payload['jmp'] not in self.__jmp:
+                raise SyntaxError(instruction.line_number,instruction.line,"%s is not a valid jump instruction."%(instruction.payload['jump']))
+            
             return self.encodeC(instruction.payload)
         #is a label so had no code.
         return None
