@@ -1,6 +1,7 @@
 import sys
 from parser import Parser,Instruction
 from encode import BinaryEncoder,SymbolTable
+from errors import SyntaxError
 
 if(len(sys.argv) < 2):
     print("The assembler requires the name of the asm file to be compiled.")
@@ -36,6 +37,8 @@ try:
 except IOError as e:
     errno, strerror = e.args
     print("I/O error({0}): {1}".format(errno,strerror))
+except SyntaxError as e:
+    print(e)
 
 
     
