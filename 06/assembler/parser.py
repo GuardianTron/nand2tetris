@@ -130,7 +130,7 @@ class Instruction:
 
     @property
     def line(self):
-        return self__line
+        return self.__line
     
     @property
     def payload(self):
