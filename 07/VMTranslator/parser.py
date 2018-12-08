@@ -92,9 +92,9 @@ class Parser:
 
     def __parsePushPop(self,command):
         if len(command) != 2:
-            raise ParseError(self.__line_number,self.__current_line,"Push commands must have two arguments")
+            raise ParseError(self.__line_number,self.__current_line,"Push/Pop commands must have two arguments")
         elif not command[2].isdigit()
-            raise ParseError(self.__line_number,self.__current_line,"Push commands must have an integer as their final argument.")
+            raise ParseError(self.__line_number,self.__current_line,"Push/Pop commands must have an integer as their final argument.")
         
         if command[0] == 'push':
             self.__commandType = C_PUSH
