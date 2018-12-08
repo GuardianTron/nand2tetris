@@ -39,8 +39,8 @@ class Parser:
             
             self.__current_line = self.__file[self.__line_number]
             self.__line_number+=1
-            current_line = self.__stripComments(current_line)
-            is_whitespace = (len(current_line) == 0)
+            self.__current_line = self.__stripComments(self.__current_line)
+            is_whitespace = (len(self.__current_line) == 0)
 
         #split the command
         command = self.__current_line.split()
@@ -73,6 +73,10 @@ class Parser:
     @property
     def line_number(self):
         return self.__line_number
+
+    @property
+    def current_line(self):
+        return self__current_line
 
     @property 
     def has_more_commands(self):
