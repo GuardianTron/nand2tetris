@@ -1,4 +1,6 @@
+import re
 from errors import FileError,ParseError
+
 
 class Parser:
 
@@ -23,9 +25,10 @@ class Parser:
 
         #open the file
         with open(self.__file_path) as f:
-            self.__file = f.readLines()
+            self.__file = f.readlines()
 
         self.__line_number = 0
+        self.__current_line = ''
         
         self.__arg1 = ''
         self.__arg2 = '' 
@@ -36,7 +39,6 @@ class Parser:
         is_whitespace = True
         #advance until we hit a command
         while is_whitespace and self.has_more_commands:
-            
             self.__current_line = self.__file[self.__line_number]
             self.__line_number+=1
             self.__current_line = self.__stripComments(self.__current_line)
@@ -48,7 +50,7 @@ class Parser:
         if command[0] == 'push' or command[0] == 'pop' :
             self.__parsePushPop(command)
         elif len(command) == 0 and command[0] in ['and','or','neg','not','add','sub','eq','lt','gt']: #handle logical and arithmetic commands
-            self.__commandType = C_ARITHMETIC
+            self.__commandType = Parser.C_ARITHMETIC
             #no arguments
             self.__arg1 = ''
             self.__arg2 = ''
@@ -76,7 +78,7 @@ class Parser:
 
     @property
     def current_line(self):
-        return self__current_line
+        return self.__current_line
 
     @property 
     def has_more_commands(self):
@@ -99,15 +101,15 @@ class Parser:
     #parse commands
 
     def __parsePushPop(self,command):
-        if len(command) != 2:
+        if len(command) != 3:
             raise ParseError(self.__line_number,self.__current_line,"Push/Pop commands must have two arguments")
-        elif not command[2].isdigit()
+        elif not command[2].isdigit():
             raise ParseError(self.__line_number,self.__current_line,"Push/Pop commands must have an integer as their final argument.")
         
         if command[0] == 'push':
-            self.__commandType = C_PUSH
+            self.__commandType = Parser.C_PUSH
         elif command[0] == 'pop':
-            self.__commandType = C_POP
+            self.__commandType = Parser.C_POP
         else: #mistakenly called on wrong type of command
             raise Exception('Parser::__parsePushPop called on invalide command: %s'%(command[0]))
             
@@ -120,23 +122,23 @@ class Parser:
 
     def __getRawPath(self,path):
         parts = path.split('.')
-        if len(parts) == 2 and part[1] == '.vm':
+        if len(parts) == 2 and parts[1] == 'vm':
             return parts[0]
-        raise new FileError(path,"")
+        raise FileError(path,"Files must be of extension .vm")
     
     def __getBaseFileName(self,raw_path):
-        parts = raw_path.split('/').split('\')
+        parts = re.split(r"\|/",raw_path)
         return parts[-1]
 
     def __stripWhitespace(self,line):
-        return line.replace("\n","").replace("\r","").strip()
+        return line.replace('\n',"").replace('\r',"").strip()
     
     def __stripComments(self,line):
-        self.__stripWhitespace(line)
+        line = self.__stripWhitespace(line)
         comment = line.find("//")
         if comment > -1:
             line = line[0:comment]
-        self.__stripWhitespace(line):
+        line = self.__stripWhitespace(line)
         return line
         
         
