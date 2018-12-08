@@ -43,11 +43,15 @@ class Parser:
             is_whitespace = (len(current_line) == 0)
 
         #split the command
-        command = self.current_line.split(' ')
+        command = self.__current_line.split()
+
         if command[0] == 'push' or command[0] == 'pop' :
             self.__parsePushPop(command)
-
-            
+        elif len(command) == 0 and command[0] in ['and','or','neg','not','add','sub','eq','lt','gt']: #handle logical and arithmetic commands
+            self.__commandType = C_ARITHMETIC
+            #no arguments
+            self.__arg1 = ''
+            self.__arg2 = ''
 
         
 
