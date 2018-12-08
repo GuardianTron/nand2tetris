@@ -44,8 +44,9 @@ class Parser:
 
         #split the command
         command = self.current_line.split(' ')
-        if command == 'push':
-            self.__parsePush(command)
+        if command[0] == 'push' or command[0] == 'pop' :
+            self.__parsePushPop(command)
+
             
 
         
@@ -72,19 +73,42 @@ class Parser:
     @property 
     def has_more_commands(self):
         return self.__line_number < len(self.__file)
+
+    @property 
+    def commandType(self):
+        return self.__commandType
+
+    @property
+    def arg1(self):
+        return self.__arg1
+    
+    @property
+    def arg2(self):
+        return self.__arg2
+
     
 
     #parse commands
 
-    def __parsePush(self,command):
+    def __parsePushPop(self,command):
         if len(command) != 2:
             raise ParseError(self.__line_number,self.__current_line,"Push commands must have two arguments")
         elif not command[2].isdigit()
             raise ParseError(self.__line_number,self.__current_line,"Push commands must have an integer as their final argument.")
-        self.__commandType = C_PUSH
+        
+        if command[0] == 'push':
+            self.__commandType = C_PUSH
+        elif command[0] == 'pop':
+            self.__commandType = C_POP
+        else: #mistakenly called on wrong type of command
+            raise Exception('Parser::__parsePushPop called on invalide command: %s'%(command[0]))
+            
         self.__arg1 = command[1]
         self.__arg2 = command[2]
 
+
+
+    #utility methods
 
     def __getRawPath(self,path):
         parts = path.split('.')
