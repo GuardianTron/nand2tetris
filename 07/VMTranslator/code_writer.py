@@ -50,7 +50,7 @@ class CodeWriter:
         asm.append("D=M") #save value
         asm.append("@SP")
         asm.append("AM=M-1") #get second value
-        asm.append("A=M") #store second value in A
+        asm.append("A=M") #s
 
     def __writePush(self,segment,index):
         asm = []
@@ -110,10 +110,10 @@ class CodeWriter:
         if segment in CoderWriter.asm_dynamic_pointers.keys():
             mem_seg = CodeWriter.asm_dynamic_pointers[segment]
             asm.append("@%d"%(index))
-            asm.append("D=A") #save index"@%s.%d"%(f_name,index)
+            asm.append("D=A") #save index"
             asm.append("@%s"%(mem_seg))
-            asm.append("M=D+A") #have seg"@%s.%d"%(f_name,index)cation to be accessed
-            #set the value at the top of "@%s.%d"%(f_name,index)
+            asm.append("M=M+D") #have segment point to locaation to be accessed to be accessed
+            #set the value at the top of stack
 
             self.__appendStackTopASM(asm)"@%s.%d"%(f_name,index)
                 
@@ -127,7 +127,7 @@ class CodeWriter:
             asm.append('@%d'%(index))
             asm.append("D=A")
             asm.append("@%s"%(mem_seg))
-            asm.append("M=A-D")
+            asm.append("M=M-D")
         elif segment == 'pointer':
             if index != 0 and index != 1:
                 raise CodeError("Pop pointer commands must have an argument of 0 or 1")
