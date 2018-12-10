@@ -75,8 +75,34 @@ class CodeWriter:
         self.__asm.append("M=D")
 
     def __arithmeticCompare(self,operator):
-        self.__asm.apped("@SP")
-        self.__asm
+        #generate new jump label
+        lbl = "%s.comp.%d"%(self.__current_vm_file,self.__current_lbl_num)
+        #update index for next invocation
+        self.__current_lbl_num+=1
+
+        self.__arithmeticLoadOperands()
+        self.__asm.append("D=A-D") #perform math
+        self.__asm.append("@SP") #default to true on new top of stack
+        self.__asm.append("A=M-1")
+        self.__asm.append("M=-1")
+        self.__asm.append("@%s"%(lbl))
+
+        #set up jump condition
+        if operator == "lt":
+            self.__asm.append("D;JLT")
+        elif operator == "eq":
+            self.__asm.append("D;JEQ")
+        elif operator == 'gt':
+            self.__asm.append("D;JGT")
+        
+        #if true, will jump past set false condition
+        self.__asm.append("@SP")
+        self.__asm.append("A=M-1")
+        self.__asm.append("M=0")
+
+        #add lbl to jump past in case of true
+        self.__asm.append("(%)"%(lbl))
+
 
     def __arithmeticLoadOperands(self):
         #code to pop values
