@@ -42,6 +42,16 @@ class CodeWriter:
         elif type == Parser.C_POP:
             asm = self.__writePop(segment,index)
 
+    def writeArithmetic(self,argument):
+        #code to pop values
+        asm = []
+        asm.append("@SP")
+        asm.append("AM=M-1")#get to top of stack
+        asm.append("D=M") #save value
+        asm.append("@SP")
+        asm.append("AM=M-1") #get second value
+        asm.append("A=M") #store second value in A
+
     def __writePush(self,segment,index):
         asm = []
         #handle constant
