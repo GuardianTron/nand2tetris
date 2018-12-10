@@ -16,3 +16,13 @@ class ParseError(Exception):
 
     def __str__(self):
         return "%d:\t%s -- %s"%(self.__line_number,self.__command,self.__error_message)
+
+
+class CodeError(Exception):
+
+    def __init__(self,message):
+        self.__message = message
+    
+    def __str__(self):
+
+        return self.__message
