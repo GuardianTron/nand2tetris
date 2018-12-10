@@ -42,16 +42,35 @@ class CodeWriter:
             self.__writePop(segment,index)
 
     def writeArithmetic(self,argument):
+
+
+    def __arithmeticOneOperand(self,operator):
+        #Get top most value on stack and save
+        self.__asm.append("@SP") 
+        self.__asm.append("A=M-1")
+        if operator == "neg":
+            self.__asm.append("M=-M")
+        elif operator == "not":
+            self.append("!M")
+
+
+
+        
+    def __arithmeticTwoOperands(self,operator):
+        
         #code to pop values
         self.__asm.append("@SP")
         self.__asm.append("AM=M-1")#get to top of stack
         self.__asm.append("D=M") #save operand
         self.__asm.append("@SP")
-        self.__asm.append("M=M-1") #get second operand - don't save because we will be reusing
+        self.__asm.append("A=M-1") #get second operand - don't save because we will be reusing
         self.__asm.append("A=M") #save second operand
 
         if argument == 'add':
             self.__asm.append("D=D+A")
+        elif argument == 'sub':
+            self.__asm.append("D=D-A")
+        
 
         self.__asm.append("@SP")
         self.__asm.append("A=M-1")
