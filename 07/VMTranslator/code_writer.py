@@ -23,7 +23,7 @@ class CodeWriter:
         #set assembly labels
         self.__current_index = 0
 
-        self.__static_labels = []
+        self.__static_labels = {}
 
 
     def sefFileName(self,file_name):
@@ -40,8 +40,7 @@ class CodeWriter:
             asm = self.__writePush(segment,index)
 
         elif type == Parser.C_POP:
-            if segment = 'constant':
-                raise CodeError("pop constant is not a legal operation.")
+            asm = self.__writePop(segment,index)
 
     def __writePush(self,segment,index):
         asm = []
@@ -79,12 +78,10 @@ class CodeWriter:
             asm.append('D=M')
         elif segment == 'static':
             f_name = self.__current_vm_file
-            asm.append("@%s.%d"%(f_name,index))
+            asm.append(self.__generateStaticLabel(index))
         else: #invalid segement passed
             raise CodeError("Segment %s is not a valid memory segment."%(segment))
 
-
-                
         #common instructions to all push commands
         asm.append('@SP') #set memory location to stack pointer
         asm.append('A=M') #point to top of stack
@@ -93,3 +90,66 @@ class CodeWriter:
         asm.append('M=M+1')
 
         return asm
+    
+    def __writePop(self,segment,index):
+        asm = []
+        #get value at top of stack
+        
+
+        #handle this,that,arg,local segments
+        if segment in CoderWriter.asm_dynamic_pointers.keys():
+            mem_seg = CodeWriter.asm_dynamic_pointers[segment]
+            asm.append("@%d"%(index))
+            asm.append("D=A") #save index"@%s.%d"%(f_name,index)
+            asm.append("@%s"%(mem_seg))
+            asm.append("M=D+A") #have seg"@%s.%d"%(f_name,index)cation to be accessed
+            #set the value at the top of "@%s.%d"%(f_name,index)
+
+            self.__appendStackTopASM(asm)"@%s.%d"%(f_name,index)
+                
+            
+            #save value to desired location
+            asm.append("@%s"%(mem_seg))
+            asm.append("A=M")
+            asm.append("M=D") #save value at top of stack to desired location.
+            
+            #restore base address
+            asm.append('@%d'%(index))
+            asm.append("D=A")
+            asm.append("@%s"%(mem_seg))
+            asm.append("M=A-D")
+        elif segment == 'pointer':
+            if index != 0 and index != 1:
+                raise CodeError("Pop pointer commands must have an argument of 0 or 1")
+            #get top of stack
+            self.__appendStackTopASM(asm)
+            pointer = 'THIS'
+            if index == 1:
+                pointer = that
+            asm.append("@%s"%(pointer))
+            asm.append("M=D")
+        elif segment == 'temp':
+            if index > 7 of index < 0:
+                raise CodeError("Pop temp commands may only take integers 0 through 7 as arguments.")
+            self.__appendStackTopASM(asm)
+            asm.append("@R%d"%(index))
+            asm.append("M=D")
+        elif segment == "static":
+            self.__appendStackTopASM(asm)
+            asm.append(self.__generateStaticLabel(index))
+            asm.append('M=D')
+        else:
+            raise CodeError("pop %s is unsupported"%(segment))
+
+        return asm
+
+
+
+    def __appendStackTopASM(self,asm):
+        asm.append("@SP") 
+        asm.append("AM=M-1") #get pointer to top of stack and set
+        asm.append("D=M") #get value at top
+
+    def __generateStaticLabel(self,index):
+            return "@%s.%d"%(f_name,index)
+
