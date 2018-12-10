@@ -21,9 +21,8 @@ class CodeWriter:
         self.__current_vm_file = ''
         #current number for generating indexes for dynamically 
         #set assembly labels
-        self.__current_index = 0
+        self.__current_lbl_num = 0
 
-        self.__static_labels = {}
 
 
     def sefFileName(self,file_name):
@@ -58,13 +57,8 @@ class CodeWriter:
         
     def __arithmeticTwoOperands(self,operator):
         
-        #code to pop values
-        self.__asm.append("@SP")
-        self.__asm.append("AM=M-1")#get to top of stack
-        self.__asm.append("D=M") #save operand
-        self.__asm.append("@SP")
-        self.__asm.append("A=M-1") #get second operand - don't save because we will be reusing
-        self.__asm.append("A=M") #save second operand
+        self.__arithmeticLoadOperands()
+
 
         if argument == 'add':
             self.__asm.append("D=D+A")
@@ -79,6 +73,20 @@ class CodeWriter:
         self.__asm.append("@SP")
         self.__asm.append("A=M-1")
         self.__asm.append("M=D")
+
+    def __arithmeticCompare(self,operator):
+        self.__asm.apped("@SP")
+        self.__asm
+
+    def __arithmeticLoadOperands(self):
+        #code to pop values
+        self.__asm.append("@SP")
+        self.__asm.append("AM=M-1")#get to top of stack
+        self.__asm.append("D=M") #save operand
+        self.__asm.append("@SP")
+        self.__asm.append("A=M-1") #get second operand - don't save because we will be reusing
+        self.__asm.append("A=M") #save second operand
+
 
     def __writePush(self,segment,index):
         #handle constant
