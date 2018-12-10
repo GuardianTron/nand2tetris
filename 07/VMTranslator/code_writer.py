@@ -45,10 +45,17 @@ class CodeWriter:
         #code to pop values
         self.__asm.append("@SP")
         self.__asm.append("AM=M-1")#get to top of stack
-        self.__asm.append("D=M") #save value
+        self.__asm.append("D=M") #save operand
         self.__asm.append("@SP")
-        self.__asm.append("AM=M-1") #get second value
-        self.__asm.append("A=M") #s
+        self.__asm.append("M=M-1") #get second operand - don't save because we will be reusing
+        self.__asm.append("A=M") #save second operand
+
+        if argument == 'add':
+            self.__asm.append("D=D+A")
+
+        self.__asm.append("@SP")
+        self.__asm.append("A=M-1")
+        self.__asm.append("M=D")
 
     def __writePush(self,segment,index):
         #handle constant
