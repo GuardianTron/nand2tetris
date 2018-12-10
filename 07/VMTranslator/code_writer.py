@@ -70,6 +70,10 @@ class CodeWriter:
             self.__asm.append("D=D+A")
         elif argument == 'sub':
             self.__asm.append("D=D-A")
+        elif arugment == 'and':
+            self.__asm.append("D=D&A")
+        elif argument == "or":
+            self.__asm.append("D=D|A")
         
 
         self.__asm.append("@SP")
