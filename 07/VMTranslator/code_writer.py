@@ -69,7 +69,7 @@ class CodeWriter:
 
 
         
-    def __arithmeticTwoOperands(self,operator):
+    def __arithmeticTwoOperands(self,argument:
         
         self.__arithmeticLoadOperands()
 
