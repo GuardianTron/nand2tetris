@@ -43,12 +43,12 @@ class CodeWriter:
 
     def writeArithmetic(self,argument):
 
-        if argument == neg or argument == not:
+        if argument == 'neg' or argument == 'not':
             self.__arithmeticOneOperand(argument)
         elif arugment in ('add','sub','and','or'):
-            self.__arithmeticTwoOperands(argument):
+            self.__arithmeticTwoOperands(argument)
         elif argument in ('lt','gt','eq'):
-            self.__arithmeticCompare(argument):
+            self.__arithmeticCompare(argument)
         else:
             raise CodeError("%s is not a valid operator."%(argument))
 
@@ -139,12 +139,12 @@ class CodeWriter:
             self.__asm.append("@%s"%(CodeWriter.self.__asm_dynamic_pointers[segment])) #set memory location
             #instructions common to all     
             self.__asm.append('D=M') #save location
-            self.__asm.append('@%d'%(index) #set index
+            self.__asm.append('@%d'%(index)) #set index
             self.__asm.append('A=D+A') #set pointer
             self.__asm.append('D=M') #get value out of memory
         elif segment == 'pointer':
             if index !='1' or index!='0':
-                raise new CodeError("push pointer can only take 1 and 0 as arguments.")
+                raise CodeError("push pointer can only take 1 and 0 as arguments.")
             #get the address of this or that
             if index == '0':
                 pointer = "@THIS"
@@ -212,7 +212,7 @@ class CodeWriter:
             self.__asm.append("@%s"%(pointer))
             self.__asm.append("M=D")
         elif segment == 'temp':
-            if index > 7 of index < 0:
+            if index > 7 or index < 0:
                 raise CodeError("Pop temp commands may only take integers 0 through 7 as arguments.")
             self.__appendStackTopASM()
             self.__asm.append("@R%d"%(index))
