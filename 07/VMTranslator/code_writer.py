@@ -15,7 +15,8 @@ class CodeWriter:
         #holds assembly code
         self.__asm = []
 
-        self.__file_name = output_file
+        self.__file_name = output_file + ".asm"
+        
         #holds the name of the file currently being processed
         #for namespacing purposes
         self.__current_vm_file = ''
