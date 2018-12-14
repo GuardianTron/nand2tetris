@@ -53,6 +53,9 @@ class CodeWriter:
             raise CodeError("%s is not a valid operator."%(argument))
 
     def close(self):
+        #add newlines to each line of assembly
+        for i in range(0,len(self.__asm)):
+            self.__asm[i]+="\n"
         with open(self.__file_name,"w") as f:
             f.writelines(self.__asm)
 
