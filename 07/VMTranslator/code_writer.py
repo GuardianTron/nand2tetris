@@ -30,7 +30,7 @@ class CodeWriter:
         self.__current_vm_file = file_name
 
     
-    def writePushPop(type,segment,index):
+    def writePushPop(self,type,segment,index):
 
         if not index.isdigit():
             raise CodeError("Push and pop instructions must have an integer as their second argument.")
