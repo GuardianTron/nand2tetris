@@ -45,7 +45,7 @@ class CodeWriter:
 
         if argument == 'neg' or argument == 'not':
             self.__arithmeticOneOperand(argument)
-        elif arugment in ('add','sub','and','or'):
+        elif argument in ('add','sub','and','or'):
             self.__arithmeticTwoOperands(argument)
         elif argument in ('lt','gt','eq'):
             self.__arithmeticCompare(argument)
