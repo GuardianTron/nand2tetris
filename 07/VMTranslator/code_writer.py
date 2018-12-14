@@ -36,13 +36,15 @@ class CodeWriter:
             raise CodeError("Push and pop instructions must have an integer as their second argument.")
         index = int(index)
         if type == Parser.C_PUSH:
+            self.__asm.append("//push %s %d"%(segment,index))
             self.__writePush(segment,index)
 
         elif type == Parser.C_POP:
+            self.__asm.append("//pop %s %d"%(segment,index))
             self.__writePop(segment,index)
 
     def writeArithmetic(self,argument):
-
+        self.__asm.append("//%s"%(argument))
         if argument == 'neg' or argument == 'not':
             self.__arithmeticOneOperand(argument)
         elif argument in ('add','sub','and','or'):
@@ -79,7 +81,7 @@ class CodeWriter:
         if argument == 'add':
             self.__asm.append("D=D+A")
         elif argument == 'sub':
-            self.__asm.append("D=D-A")
+            self.__asm.append("D=A-D")
         elif argument == 'and':
             self.__asm.append("D=D&A")
         elif argument == "or":
