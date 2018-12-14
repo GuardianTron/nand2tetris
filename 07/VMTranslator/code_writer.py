@@ -23,6 +23,7 @@ class CodeWriter:
         #current number for generating indexes for dynamically 
         #set assembly labels
         self.__current_lbl_num = 0
+        self.__static_lbl_num = 0 #allows us to track static overflow
 
         self.__static_lbls = {}
 
@@ -240,7 +241,9 @@ class CodeWriter:
     def __generateStaticLabel(self,index):
         index_str = str(index)
         if index_str not in self.__static_lbls.keys(): #generate new label if not found
-            self.__static_lbls[index_str] = "@%s.%d"%(self.__current_vm_file,self.__current_lbl_num)
-            self.__current_lbl_num += 1 
+            if self.__static_lbl_num >=255:
+                raise CodeError("An overflow of the static variable buffer has occured.")
+            self.__static_lbls[index_str] = "@%s.%d"%(self.__current_vm_file,self.__static_lbl_num)
+            self.__static_lbl_num += 1 
         return self.__static_lbls[index_str]
 
