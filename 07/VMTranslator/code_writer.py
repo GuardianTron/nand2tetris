@@ -42,6 +42,15 @@ class CodeWriter:
 
     def writeArithmetic(self,argument):
 
+        if argument == neg or argument == not:
+            self.__arithmeticOneOperand(argument)
+        elif arugment in ('add','sub','and','or'):
+            self.__arithmeticTwoOperands(argument):
+        elif argument in ('lt','gt','eq'):
+            self.__arithmeticCompare(argument):
+        else:
+            raise CodeError("%s is not a valid operator."%(argument))
+
 
     def __arithmeticOneOperand(self,operator):
         #Get top most value on stack and save
