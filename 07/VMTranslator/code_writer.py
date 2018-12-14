@@ -53,7 +53,7 @@ class CodeWriter:
             raise CodeError("%s is not a valid operator."%(argument))
 
     def close(self):
-        with open(self.__current_vm_file,"w") as f:
+        with open(self.__file_name,"w") as f:
             f.writelines(self.__asm)
 
 
