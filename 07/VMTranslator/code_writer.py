@@ -134,8 +134,8 @@ class CodeWriter:
             self.__asm.append('D=A') #store constant in register
                 
         #handle memory segments
-        elif segment in CodeWriter.self.__asm_dynamic_pointers.keys():
-            self.__asm.append("@%s"%(CodeWriter.self.__asm_dynamic_pointers[segment])) #set memory location
+        elif segment in CodeWriter.__asm_dynamic_pointers.keys():
+            self.__asm.append("@%s"%(CodeWriter.__asm_dynamic_pointers[segment])) #set memory location
             #instructions common to all     
             self.__asm.append('D=M') #save location
             self.__asm.append('@%d'%(index)) #set index
