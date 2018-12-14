@@ -147,10 +147,10 @@ class CodeWriter:
             self.__asm.append('A=D+A') #set pointer
             self.__asm.append('D=M') #get value out of memory
         elif segment == 'pointer':
-            if index !='1' or index!='0':
+            if index != 1 and index != 0:
                 raise CodeError("push pointer can only take 1 and 0 as arguments.")
             #get the address of this or that
-            if index == '0':
+            if index == 0:
                 pointer = "@THIS"
             else:
                 pointer = "@THAT"
