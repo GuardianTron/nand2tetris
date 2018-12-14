@@ -51,6 +51,10 @@ class CodeWriter:
         else:
             raise CodeError("%s is not a valid operator."%(argument))
 
+    def close(self):
+        with open(self.__current_vm_file,"w") as f:
+            f.writelines(self.__asm)
+
 
     def __arithmeticOneOperand(self,operator):
         #Get top most value on stack and save
