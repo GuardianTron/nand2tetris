@@ -18,7 +18,7 @@ try:
         if p.commandType == Parser.C_POP or p.commandType == Parser.C_PUSH:
             c.writePushPop(p.commandType,p.arg1,p.arg2)
         elif p.commandType == Parser.C_ARITHMETIC:
-            c.writeArithmetic(p.commandType)
+            c.writeArithmetic(p.arg1)
 
     c.close()
 
