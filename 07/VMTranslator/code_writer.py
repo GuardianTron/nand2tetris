@@ -26,7 +26,7 @@ class CodeWriter:
 
 
 
-    def sefFileName(self,file_name):
+    def setFileName(self,file_name):
         self.__current_vm_file = file_name
 
     
