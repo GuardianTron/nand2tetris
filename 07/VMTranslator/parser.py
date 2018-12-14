@@ -127,7 +127,8 @@ class Parser:
         raise FileError(path,"Files must be of extension .vm")
     
     def __getBaseFileName(self,raw_path):
-        parts = re.split(r"\|/",raw_path)
+        parts = re.split(r"\\|/",raw_path)
+
         return parts[-1]
 
     def __stripWhitespace(self,line):
