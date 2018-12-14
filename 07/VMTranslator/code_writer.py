@@ -157,8 +157,6 @@ class CodeWriter:
                 
             self.__asm.append(pointer)
             self.__asm.append('D=M') #save current memory address of this
-            self.__asm.append('@%d'%(index))
-            self.__asm.append('D=D+A') #change pointer to this/that + index
 
         elif segment == 'temp':
             if index > 7 or index < 0:
