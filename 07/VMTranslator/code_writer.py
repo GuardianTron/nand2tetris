@@ -219,7 +219,7 @@ class CodeWriter:
             if index > 7 or index < 0:
                 raise CodeError("Pop temp commands may only take integers 0 through 7 as arguments.")
             self.__appendStackTopASM()
-            self.__asm.append("@R%d"%(index))
+            self.__asm.append("@R%d"%(index+5))
             self.__asm.append("M=D")
         elif segment == "static":
             self.__appendStackTopASM()
