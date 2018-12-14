@@ -59,7 +59,7 @@ class CodeWriter:
         if operator == "neg":
             self.__asm.append("M=-M")
         elif operator == "not":
-            self.append("!M")
+            self.append("M=!M")
 
 
 
