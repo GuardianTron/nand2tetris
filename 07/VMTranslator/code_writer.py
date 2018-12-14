@@ -64,7 +64,7 @@ class CodeWriter:
         if operator == "neg":
             self.__asm.append("M=-M")
         elif operator == "not":
-            self.append("M=!M")
+            self.__asm.append("M=!M")
 
 
 
@@ -77,7 +77,7 @@ class CodeWriter:
             self.__asm.append("D=D+A")
         elif argument == 'sub':
             self.__asm.append("D=D-A")
-        elif arugment == 'and':
+        elif argument == 'and':
             self.__asm.append("D=D&A")
         elif argument == "or":
             self.__asm.append("D=D|A")
@@ -134,8 +134,8 @@ class CodeWriter:
             self.__asm.append('D=A') #store constant in register
                 
         #handle memory segments
-        elif segment in CodeWriter.__asm_dynamic_pointers.keys():
-            self.__asm.append("@%s"%(CodeWriter.__asm_dynamic_pointers[segment])) #set memory location
+        elif segment in CodeWriter.asm_dynamic_pointers.keys():
+            self.__asm.append("@%s"%(CodeWriter.asm_dynamic_pointers[segment])) #set memory location
             #instructions common to all     
             self.__asm.append('D=M') #save location
             self.__asm.append('@%d'%(index)) #set index
@@ -179,7 +179,7 @@ class CodeWriter:
         
 
         #handle this,that,arg,local segments
-        if segment in CoderWriter.asm_dynamic_pointers.keys():
+        if segment in CodeWriter.asm_dynamic_pointers.keys():
             mem_seg = CodeWriter.asm_dynamic_pointers[segment]
             self.__asm.append("@%d"%(index))
             self.__asm.append("D=A") #save index"
@@ -207,7 +207,7 @@ class CodeWriter:
             self.__appendStackTopASM()
             pointer = 'THIS'
             if index == 1:
-                pointer = that
+                pointer = "THAT"
             self.__asm.append("@%s"%(pointer))
             self.__asm.append("M=D")
         elif segment == 'temp':
@@ -232,5 +232,5 @@ class CodeWriter:
         self.__asm.append("D=M") #get value at top
 
     def __generateStaticLabel(self,index):
-            return "@%s.%d"%(f_name,index)
+            return "@%s.%d"%(self.__current_vm_file,index)
 
