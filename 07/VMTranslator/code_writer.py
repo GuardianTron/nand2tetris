@@ -24,6 +24,8 @@ class CodeWriter:
         #set assembly labels
         self.__current_lbl_num = 0
 
+        self.__static_lbls = {}
+
 
 
     def setFileName(self,file_name):
@@ -166,6 +168,7 @@ class CodeWriter:
         elif segment == 'static':
             f_name = self.__current_vm_file
             self.__asm.append(self.__generateStaticLabel(index))
+            self.__asm.append("D=M")
         else: #invalid segement passed
             raise CodeError("Segment %s is not a valid memory segment."%(segment))
 
@@ -235,5 +238,9 @@ class CodeWriter:
         self.__asm.append("D=M") #get value at top
 
     def __generateStaticLabel(self,index):
-            return "@%s.%d"%(self.__current_vm_file,index)
+        index_str = str(index)
+        if index_str not in self.__static_lbls.keys(): #generate new label if not found
+            self.__static_lbls[index_str] = "@%s.%d"%(self.__current_vm_file,self.__current_lbl_num)
+            self.__current_lbl_num += 1 
+        return self.__static_lbls[index_str]
 
