@@ -117,7 +117,7 @@ class CodeWriter:
         self.__asm.append("M=0")
 
         #add lbl to jump past in case of true
-        self.__asm.append("(%)"%(lbl))
+        self.__asm.append("(%s)"%(lbl))
 
 
     def __arithmeticLoadOperands(self):
