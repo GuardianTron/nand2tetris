@@ -69,10 +69,9 @@ class CodeWriter:
 
 
         
-    def __arithmeticTwoOperands(self,argument:
+    def __arithmeticTwoOperands(self,argument):
         
         self.__arithmeticLoadOperands()
-
 
         if argument == 'add':
             self.__asm.append("D=D+A")
