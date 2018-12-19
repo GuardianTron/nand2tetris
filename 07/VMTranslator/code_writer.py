@@ -121,6 +121,54 @@ class CodeWriter:
         #add return label
         self.__asm.append("(%s"%(ret_label))
 
+    def writeReturn(self):
+        #current function's local is also top
+        #of saved frame. Saave it
+        self.__asm.append("@LCL")
+        self.__asm.append("D=M")
+        self.__asm.append("@R5")
+        self.__asm.append("M=D")
+
+        #save return instruction address
+        self.__asm.append("A=D-5")
+        self.__asm.append("D=M")
+        self.__asm.append("@R6")
+        self.__asm.append("M=D")
+
+        #top of the stack represents
+        #the return value.
+        #caller will expect to find this value
+        #at the former top of it's stack where it
+        #placed the arguments.
+        self.__asm.append("@SP")
+        self.__asm.append("A=M-1")
+        self.__asm.append("D=M")
+        self.__asm.append("@ARG")
+        self.__asm.append("M=D")
+
+        #set stack top back to one above the 
+        #return value for the caller
+        self.__asm.append("D=A+1")
+        self.__asm.append("@SP")
+        self.__asm.append("M=D")
+
+        #reset this, that, arg and lcl for caller
+        for pointer in ['THAT','THIS','ARG','LCL']    
+            self.__asm.append("@R5")
+            self.__asm.append("AM=M-1") #decrement address each time to point to next segment
+            self.__asm.append("D=M")
+            self.__asm.append("@"+pointer)
+            self.__asm.append("M=D")
+        
+        #execute return instruction
+        self.__asm.append("@R6")
+        self.__asm.append("A=M")
+        self.__asm.append("0;JMP")
+       
+        
+
+
+
 
     def close(self):
         #add newlines to each line of assembly
@@ -307,6 +355,8 @@ class CodeWriter:
         self.__asm.append("M=D")
         self.__asm.append("@SP")
         self.__asm.append("M=M+1")
+
+
 
     def __appendStackTopASM(self):
         self.__asm.append("@SP") 
