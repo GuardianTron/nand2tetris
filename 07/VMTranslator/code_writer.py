@@ -27,6 +27,8 @@ class CodeWriter:
 
         self.__static_lbls = {}
 
+        self.__current_function = ''
+
 
 
     def setFileName(self,file_name):
@@ -56,6 +58,23 @@ class CodeWriter:
             self.__arithmeticCompare(argument)
         else:
             raise CodeError("%s is not a valid operator."%(argument))
+
+    def writeLabel(self,label):
+        self.__asm.append("(%s)"%(self.__generateFunctionLabel(label)))
+
+    def writeGoto(self,label):
+        self.__asm.append("@%s"%(self.__generateFunctionLabel(label)))
+        self.__asm.append("0;JMP")
+
+    def writeIf(self,label):
+        #pop top of stack
+
+        self.__asm.append("@SP")
+        self.__asm.append("AM = M-1") #go to top of stack
+        self.__asm.append("D=M") #save value for jump
+        self.__asm.append("@%s"%s(self.__generateFunctionLabel(label))) #set jump location
+        self.__asm.append("D;JNE") #perform jump.  True == -1 in hack specification
+
 
     def close(self):
         #add newlines to each line of assembly
@@ -247,3 +266,6 @@ class CodeWriter:
             self.__static_lbl_num += 1 
         return self.__static_lbls[index_str]
 
+
+    def __generateFunctionLabel(self,label):
+        return self.__current_function+"$"+label
