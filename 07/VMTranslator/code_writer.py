@@ -36,6 +36,15 @@ class CodeWriter:
     def setFileName(self,file_name):
         self.__current_vm_file = file_name
 
+    def writeInit(self):
+        #initialize stack pointer
+        self.__asm.append("@256")
+        self.__asm.append("D=A")
+        self.__asm.append("@SP")
+        self.__asm.append("M=D")
+        #call the Sys.init function
+        self.writeCall('Sys.init','0')
+
     
     def writePushPop(self,type,segment,index):
 
