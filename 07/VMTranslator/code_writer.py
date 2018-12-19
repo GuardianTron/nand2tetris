@@ -29,6 +29,8 @@ class CodeWriter:
 
         self.__current_function = ''
 
+        self.__return_number = 0 #number for the current return instruction
+
 
 
     def setFileName(self,file_name):
@@ -74,6 +76,50 @@ class CodeWriter:
         self.__asm.append("D=M") #save value for jump
         self.__asm.append("@%s"%s(self.__generateFunctionLabel(label))) #set jump location
         self.__asm.append("D;JNE") #perform jump.  True == -1 in hack specification
+
+    def writeFunction(self,label,num_locals):
+        num_locals = int(num_locals)
+        self.__current_function = label
+        #@todo...consider adding checking for unique labels?
+        self.__asm.append("(%s)"%(label))
+        #add locals - note: lcl pointer set by caller
+        for i in range(0,num_locals):
+            self.__writePush('constant','0')
+
+    def writeCall(self,function,num_args):
+        #generate return label
+        ret_label = "RET_ADDRESS_CALL"+str(self.__return_number)
+        self.__return_number += 1
+        self.__pushPointer(ret_label)
+        #save stack frame
+        self.__pushPointer('LCL')
+        self.__pushPointer('ARG')
+        self.__pushPointer('THIS')
+        self.__pushPointer('THAT')
+
+        #set up new args and locals
+        #args = sp - (num_args + 5)
+        #num_args + 5 represents the arguments
+        #and the saved frame=
+        args_and_frame = int(num_args) + 5
+        self.__asm.append("@"+str(args_and_frame))
+        self.__asm.append("D=A")
+        self.__asm.append("@SP")
+        self.__asm.append("D=M-D")
+        self.__asm.append("@ARG")
+        self.__asm.append("M=D")
+        #set up local to top of stack
+        self.__asm.append("@SP")
+        self.__asm.append("D=M")
+        self.__asm.append("@LCL")
+        self.__asm.append("M=D")
+
+        #jump to the function being called
+        self.__asm.append("@"+function)
+        self.__asm.append("0;JMP")
+
+        #add return label
+        self.__asm.append("(%s"%(ret_label))
 
 
     def close(self):
@@ -249,8 +295,18 @@ class CodeWriter:
         else:
             raise CodeError("pop %s is unsupported"%(segment))
 
-
-
+    #NOT related to push and pop vm commands
+    #this is a helper method for push memory pointers
+    #onto the stack for generation of stack call frames.
+    def __pushPointer(self,pointer_name):
+        #push return address onto the stack
+        self.__asm.append("@"+pointer_name)
+        self.__asm.append("D=A")
+        self.__asm.append("@SP")
+        self.__asm.append("A=M")
+        self.__asm.append("M=D")
+        self.__asm.append("@SP")
+        self.__asm.append("M=M+1")
 
     def __appendStackTopASM(self):
         self.__asm.append("@SP") 
