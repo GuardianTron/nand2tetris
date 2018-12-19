@@ -44,6 +44,10 @@ class Parser:
             self.__current_line = self.__stripComments(self.__current_line)
             is_whitespace = (len(self.__current_line) == 0)
 
+        #reset arguments
+        self.__arg1 = ''
+        self.__arg2 = ''
+
         #split the command
         command = self.__current_line.split()
 
@@ -53,9 +57,43 @@ class Parser:
             self.__commandType = Parser.C_ARITHMETIC
             #no arguments
             self.__arg1 = command[0]
-            self.__arg2 = ''
 
-        
+        elif len(command) == 2 and command[0] in ['label','goto','if-goto']:
+            if not self.__isValidSymbol(command[1]):
+                raise new ParseError(self.__line_number,_self.__current_line," contains an invalid symbol.")
+            self.__arg2 = command[1]
+            if command[0] == 'label':
+                self.__commandType = Parser.C_LABEL
+            elif command[0] == 'goto':
+                self.__commandType = Parser.C_GOTO
+            else:
+                self.__commandType = Parser.C_IF        
+
+        elif len(command) == 1 and command[0] == 'return':
+            self.__commandType = Parser.C_RETURN
+        elif len(command) == 3 and command[0] == 'function':
+            if not self.__isValidSymbol(command[1]):
+                raise ParseError(self.__line_number,self.__current_line, " contains an invalid symbol.")
+            elif not command[2].isdigit()
+                raise ParseError(self.__line_number,self.__current_line, " the second argument must contain the number of local variables")
+
+            self.__commandType = Parser.C_FUNCTION
+            self.__arg1 = command[1]
+            self.__arg2 = command[2]
+        elif len(command) == 3 and command[0] == 'call':
+            if not self.__isValidSymbol(command[1]):
+                raise ParseError(self.__line_number,self.__current_line," contains an invalid symbol")
+            elif not command[2].isdigit():
+                raise ParseError(self.__line_number,self.__current_line," The second argument must contain the number of arguments.")
+            
+            self.__commandType = Parser.C_CALL
+            self.__arg1 = command[1]
+            self.__arg2 = command[2]
+
+        else:
+            raise ParseError(self.__line_number,self.__current_line," The parsed command is invalid.")
+         
+
 
 
         #start implementing instructions
@@ -115,6 +153,12 @@ class Parser:
             
         self.__arg1 = command[1]
         self.__arg2 = command[2]
+
+
+    #verify that the symbols are valid
+    def __isValidSymbol(self,label):
+        regex = re.compile("^(\w|\.|:)+$")
+        return not label[0].isdigit() and regex.match(label) 
 
 
 
