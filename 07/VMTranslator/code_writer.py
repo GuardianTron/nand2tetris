@@ -88,6 +88,7 @@ class CodeWriter:
         self.__asm.append("D;JNE") #perform jump.  True == -1 in hack specification
 
     def writeFunction(self,label,num_locals):
+        self.__asm.append("//function "+label+" "+num_locals)
         num_locals = int(num_locals)
         self.__current_function = label
         #@todo...consider adding checking for unique labels?
@@ -98,6 +99,7 @@ class CodeWriter:
 
     def writeCall(self,function,num_args):
         #generate return label
+        self.__asm.append("//call "+function+" "+num_args)
         ret_label = "RET_ADDRESS_CALL"+str(self.__return_number)
         self.__return_number += 1
         self.__pushPointer(ret_label)
@@ -132,6 +134,7 @@ class CodeWriter:
         self.__asm.append("(%s"%(ret_label))
 
     def writeReturn(self):
+        self.__asm.append("//return")
         #current function's local is also top
         #of saved frame. Saave it
         self.__asm.append("@LCL")
@@ -140,7 +143,9 @@ class CodeWriter:
         self.__asm.append("M=D")
 
         #save return instruction address
-        self.__asm.append("A=D-5")
+        #return instruction is five below current lcl
+        self.__asm.append("@5")
+        self.__asm.append("A=D-A")
         self.__asm.append("D=M")
         self.__asm.append("@R6")
         self.__asm.append("M=D")
@@ -154,6 +159,7 @@ class CodeWriter:
         self.__asm.append("A=M-1")
         self.__asm.append("D=M")
         self.__asm.append("@ARG")
+        self.__asm.append("A=M")
         self.__asm.append("M=D")
 
         #set stack top back to one above the 
@@ -261,7 +267,7 @@ class CodeWriter:
     def __writePush(self,segment,index):
         #handle constant
         if segment == 'constant':
-            self.__asm.append('@%d'%(index)) #set constant
+            self.__asm.append('@%s'%(index)) #set constant
             self.__asm.append('D=A') #store constant in register
                 
         #handle memory segments
