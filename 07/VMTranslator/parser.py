@@ -60,7 +60,7 @@ class Parser:
 
         elif len(command) == 2 and command[0] in ['label','goto','if-goto']:
             if not self.__isValidSymbol(command[1]):
-                raise new ParseError(self.__line_number,_self.__current_line," contains an invalid symbol.")
+                raise ParseError(self.__line_number,self.__current_line," contains an invalid symbol.")
             self.__arg2 = command[1]
             if command[0] == 'label':
                 self.__commandType = Parser.C_LABEL
@@ -74,13 +74,14 @@ class Parser:
         elif len(command) == 3 and command[0] == 'function':
             if not self.__isValidSymbol(command[1]):
                 raise ParseError(self.__line_number,self.__current_line, " contains an invalid symbol.")
-            elif not command[2].isdigit()
+            elif not command[2].isdigit():
                 raise ParseError(self.__line_number,self.__current_line, " the second argument must contain the number of local variables")
 
             self.__commandType = Parser.C_FUNCTION
             self.__arg1 = command[1]
             self.__arg2 = command[2]
         elif len(command) == 3 and command[0] == 'call':
+            num_args = command[2]
             if not self.__isValidSymbol(command[1]):
                 raise ParseError(self.__line_number,self.__current_line," contains an invalid symbol")
             elif not command[2].isdigit():
@@ -164,7 +165,6 @@ class Parser:
 
     #utility methods
     @classmethod
-        pass
     def getRawPath(cls,path):
         parts = path.split('.')
         if len(parts) == 2 and parts[1] == 'vm':

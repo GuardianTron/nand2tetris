@@ -162,7 +162,7 @@ class CodeWriter:
         self.__asm.append("M=D")
 
         #reset this, that, arg and lcl for caller
-        for pointer in ['THAT','THIS','ARG','LCL']    
+        for pointer in ['THAT','THIS','ARG','LCL']:    
             self.__asm.append("@R5")
             self.__asm.append("AM=M-1") #decrement address each time to point to next segment
             self.__asm.append("D=M")
