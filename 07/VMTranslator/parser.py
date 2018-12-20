@@ -18,10 +18,10 @@ class Parser:
     def __init__(self,file_path):
         self.__file_path = file_path
         #get the raw path without the extention
-        self.__path_name = self.__getRawPath(file_path)
+        self.__path_name = self.__class__.getRawPath(file_path)
         #get the raw base name of the file
         #used for label generation
-        self.__base_name = self.__getBaseFileName(self.__path_name)
+        self.__base_name = self.__class__.getBaseFileName(self.__path_name)
 
         #open the file
         with open(self.__file_path) as f:
@@ -163,17 +163,22 @@ class Parser:
 
 
     #utility methods
-
-    def __getRawPath(self,path):
+    @classmethod
+        pass
+    def getRawPath(cls,path):
         parts = path.split('.')
         if len(parts) == 2 and parts[1] == 'vm':
             return parts[0]
         raise FileError(path,"Files must be of extension .vm")
-    
-    def __getBaseFileName(self,raw_path):
+    @classmethod
+    def getBaseFileName(cls,raw_path):
         parts = re.split(r"\\|/",raw_path)
 
         return parts[-1]
+
+    @classmethod
+    def isVMFile(cls,path):
+        return path[-3:] == ".vm"
 
     def __stripWhitespace(self,line):
         return line.replace('\n',"").replace('\r',"").strip()
