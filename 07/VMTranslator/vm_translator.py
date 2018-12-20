@@ -6,9 +6,11 @@ from errors import FileError,ParseError,CodeError
 class VMTranslator:
 
     def __init__(self,path):
-        self.__path = path
+        self.__path = os.path.abspath(path)
         if os.path.isdir(path):
-            self.__cw = CodeWriter(path)
+            print(path)
+            print(Parser.getBaseFileName(path))
+            self.__cw = CodeWriter(path+"/"+Parser.getBaseFileName(path))
             self.__cw.writeInit()
         elif os.path.isfile(path) and Parser.isVMFile(path):
             self.__cw = CodeWriter(Parser.getRawPath(path))
