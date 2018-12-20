@@ -42,6 +42,10 @@ class CodeWriter:
         self.__asm.append("D=A")
         self.__asm.append("@SP")
         self.__asm.append("M=D")
+        self.__asm.append("@LCL")
+        self.__asm.append("M=D")
+        self.__asm.append("@ARG")
+        self.__asm.append("M=D")
         #call the Sys.init function
         self.writeCall('Sys.init','0')
 
@@ -365,7 +369,7 @@ class CodeWriter:
     def __pushPointer(self,pointer_name):
         #push return address onto the stack
         self.__asm.append("@"+pointer_name)
-        self.__asm.append("D=A")
+        self.__asm.append("D=M")
         self.__asm.append("@SP")
         self.__asm.append("A=M")
         self.__asm.append("M=D")
