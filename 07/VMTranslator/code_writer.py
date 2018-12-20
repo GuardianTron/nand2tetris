@@ -131,7 +131,7 @@ class CodeWriter:
         self.__asm.append("0;JMP")
 
         #add return label
-        self.__asm.append("(%s"%(ret_label))
+        self.__asm.append("(%s)"%(ret_label))
 
     def writeReturn(self):
         self.__asm.append("//return")
