@@ -71,6 +71,7 @@ class CodeWriter:
             raise CodeError("%s is not a valid operator."%(argument))
 
     def writeLabel(self,label):
+        
         self.__asm.append("(%s)"%(self.__generateFunctionLabel(label)))
 
     def writeGoto(self,label):
@@ -83,7 +84,7 @@ class CodeWriter:
         self.__asm.append("@SP")
         self.__asm.append("AM = M-1") #go to top of stack
         self.__asm.append("D=M") #save value for jump
-        self.__asm.append("@%s"%s(self.__generateFunctionLabel(label))) #set jump location
+        self.__asm.append("@%s"%(self.__generateFunctionLabel(label))) #set jump location
         self.__asm.append("D;JNE") #perform jump.  True == -1 in hack specification
 
     def writeFunction(self,label,num_locals):

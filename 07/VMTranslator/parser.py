@@ -61,7 +61,7 @@ class Parser:
         elif len(command) == 2 and command[0] in ['label','goto','if-goto']:
             if not self.__isValidSymbol(command[1]):
                 raise ParseError(self.__line_number,self.__current_line," contains an invalid symbol.")
-            self.__arg2 = command[1]
+            self.__arg1 = command[1]
             if command[0] == 'label':
                 self.__commandType = Parser.C_LABEL
             elif command[0] == 'goto':
