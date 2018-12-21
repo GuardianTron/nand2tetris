@@ -23,9 +23,8 @@ class CodeWriter:
         #current number for generating indexes for dynamically 
         #set assembly labels
         self.__current_lbl_num = 0
-        self.__static_lbl_num = 0 #allows us to track static overflow
 
-        self.__static_lbls = {}
+
 
         self.__current_function = ''
 
