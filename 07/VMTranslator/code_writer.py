@@ -42,10 +42,7 @@ class CodeWriter:
         self.__asm.append("D=A")
         self.__asm.append("@SP")
         self.__asm.append("M=D")
-        self.__asm.append("@LCL")
-        self.__asm.append("M=D")
-        self.__asm.append("@ARG")
-        self.__asm.append("M=D")
+
         #call the Sys.init function
         self.writeCall('Sys.init','0')
 
@@ -106,7 +103,14 @@ class CodeWriter:
         self.__asm.append("//call "+function+" "+num_args)
         ret_label = "RET_ADDRESS_CALL"+str(self.__return_number)
         self.__return_number += 1
-        self.__pushPointer(ret_label)
+       
+        self.__asm.append("@"+ret_label)
+        self.__asm.append("D=A")
+        self.__asm.append("@SP")
+        self.__asm.append("A=M")
+        self.__asm.append("M=D")
+        self.__asm.append("@SP")
+        self.__asm.append("M=M+1")
         #save stack frame
         self.__pushPointer('LCL')
         self.__pushPointer('ARG')
@@ -136,6 +140,7 @@ class CodeWriter:
 
         #add return label
         self.__asm.append("(%s)"%(ret_label))
+ 
 
     def writeReturn(self):
         self.__asm.append("//return")
@@ -143,7 +148,7 @@ class CodeWriter:
         #of saved frame. Saave it
         self.__asm.append("@LCL")
         self.__asm.append("D=M")
-        self.__asm.append("@R5")
+        self.__asm.append("@R13")
         self.__asm.append("M=D")
 
         #save return instruction address
@@ -151,7 +156,7 @@ class CodeWriter:
         self.__asm.append("@5")
         self.__asm.append("A=D-A")
         self.__asm.append("D=M")
-        self.__asm.append("@R6")
+        self.__asm.append("@R14")
         self.__asm.append("M=D")
 
         #top of the stack represents
@@ -174,14 +179,14 @@ class CodeWriter:
 
         #reset this, that, arg and lcl for caller
         for pointer in ['THAT','THIS','ARG','LCL']:    
-            self.__asm.append("@R5")
+            self.__asm.append("@R13")
             self.__asm.append("AM=M-1") #decrement address each time to point to next segment
             self.__asm.append("D=M")
             self.__asm.append("@"+pointer)
             self.__asm.append("M=D")
         
         #execute return instruction
-        self.__asm.append("@R6")
+        self.__asm.append("@R14")
         self.__asm.append("A=M")
         self.__asm.append("0;JMP")
        
