@@ -8,12 +8,10 @@ class VMTranslator:
     def __init__(self,path):
         self.__path = os.path.abspath(path)
         if os.path.isdir(path):
-            print(path)
-            print(Parser.getBaseFileName(path))
-            self.__cw = CodeWriter(path+"/"+Parser.getBaseFileName(path))
+            self.__cw = CodeWriter(path+"/"+Parser.getBaseFileName(self.__path))
             self.__cw.writeInit()
-        elif os.path.isfile(path) and Parser.isVMFile(path):
-            self.__cw = CodeWriter(Parser.getRawPath(path))
+        elif os.path.isfile(self.__path) and Parser.isVMFile(self.__path):
+            self.__cw = CodeWriter(Parser.getRawPath(self.__path))
         else:
             raise FileError(path, " is not a valid vm file or directory.")
     
