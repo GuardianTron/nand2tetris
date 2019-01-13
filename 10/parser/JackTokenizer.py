@@ -55,6 +55,21 @@ class JackTokenizer:
                 match_tuple = (rule,match.group(0))
                 break
         return match_tuple
+
+    def symbol(self):
+        return self.__token
+
+    def keyword(self):
+        return self.__token
+
+    def identifier(self):
+        return self.__token
+
+    def string(self):
+        return self.__token[1:-1]
+
+    def integer(self):
+        return int(self.__token)
     
     @property
     def type(self):
