@@ -44,6 +44,8 @@ class JackTokenizer:
         self.__type = current_type
         self.__token = current_token
 
+        return self.__start < len(self.__file) and (current_type != 'whitespace' and current_type != 'comment')
+
 
 
     
@@ -57,10 +59,6 @@ class JackTokenizer:
                 match_tuple = (rule,match.group(0))
                 break
         return match_tuple
-
-    def hasMoreTokens(self):
-        return self.__start < len(self.__file)
-
     
     @property
     def type(self):
