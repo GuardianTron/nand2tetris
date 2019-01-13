@@ -9,20 +9,16 @@ class JackTokenizer:
             self.__file = fh.read()
 
         #ensure rules execute in order
-        self.rule_order = ("comment","integer","keyword","identifier","string","symbol","whitespace")
+        self.__rule_order = ("comment","integer","keyword","identifier","string","symbol","whitespace")
 
-        self.rules = {}
-        self.rules["comment"]=re.compile("(//.*\r?\n)|(/\*.*?\*/)")
-        self.rules["integer"]=re.compile("\d+")
-        self.rules["keyword"]=re.compile("((class)|(constructor)|(function)|(method)|(field)|(static)|(var)|(int)|(char)|(boolean)|(void)|(true)|(false)|(null)|(this)|(let)|(do)|(if)|(else)|(while)|(return))\s")
-        self.rules["identifier"]=re.compile("[A-Za-z_]\w*")
-        self.rules["string"]=re.compile("\".*?\"")
-        self.rules["symbol"]=re.compile("[{}\(\)\[\]\.,;\+\-\*&\|<>=/]") 
-
-        self.rules["whitespace"]=re.compile("\s+")
-        
-        for i in self.rules:
-            print(self.rules[i])
+        self.__rules = {}
+        self.__rules["comment"]=re.compile("(//.*\r?\n)|(/\*.*?\*/)")
+        self.__rules["integer"]=re.compile("\d+")
+        self.__rules["keyword"]=re.compile("((class)|(constructor)|(function)|(method)|(field)|(static)|(var)|(int)|(char)|(boolean)|(void)|(true)|(false)|(null)|(this)|(let)|(do)|(if)|(else)|(while)|(return))\s")
+        self.__rules["identifier"]=re.compile("[A-Za-z_]\w*")
+        self.__rules["string"]=re.compile("\".*?\"")
+        self.__rules["symbol"]=re.compile("[{}\(\)\[\]\.,;\+\-\*&\|<>=/]") 
+        self.__rules["whitespace"]=re.compile("\s+")
 
 
         #initialize values for scanner
@@ -52,8 +48,8 @@ class JackTokenizer:
     def __scan_token(self):
         match_tuple = None
         
-        for rule in self.rule_order:
-            match = self.rules[rule].match(self.__file,self.__start)
+        for rule in self.__rule_order:
+            match = self.__rules[rule].match(self.__file,self.__start)
             if match:
                 self.__start = match.end() #reset start point for matching
                 match_tuple = (rule,match.group(0))
