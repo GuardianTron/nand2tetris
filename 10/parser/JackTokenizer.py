@@ -2,6 +2,11 @@ import re
 
 class JackTokenizer:
 
+    KEYWORD = "keyword"
+    INT = "integerConstant"
+    IDENTIFIER = "indentifier"
+    STRING = "stringConstant"
+    SYMBOL = "symbol"
 
 
     def __init__(self,filename):
@@ -9,14 +14,14 @@ class JackTokenizer:
             self.__file = fh.read()
 
         #ensure rules execute in order
-        self.__rule_order = ("comment","integer","keyword","identifier","string","symbol","whitespace")
+        self.__rule_order = ("comment","integerConstant","keyword","identifier","stringConstant","symbol","whitespace")
 
         self.__rules = {}
         self.__rules["comment"]=re.compile("(//.*\r?\n)|(/\*.*?\*/)")
-        self.__rules["integer"]=re.compile("\d+")
+        self.__rules["integerConstant"]=re.compile("\d+")
         self.__rules["keyword"]=re.compile("((class)|(constructor)|(function)|(method)|(field)|(static)|(var)|(int)|(char)|(boolean)|(void)|(true)|(false)|(null)|(this)|(let)|(do)|(if)|(else)|(while)|(return))\s")
         self.__rules["identifier"]=re.compile("[A-Za-z_]\w*")
-        self.__rules["string"]=re.compile("\".*?\"")
+        self.__rules["stringConstant"]=re.compile("\".*?\"")
         self.__rules["symbol"]=re.compile("[{}\(\)\[\]\.,;\+\-\*&\|<>=/]") 
         self.__rules["whitespace"]=re.compile("\s+")
 
@@ -60,7 +65,7 @@ class JackTokenizer:
         return self.__token
 
     def keyword(self):
-        return self.__token
+        return self.__token.trim()
 
     def identifier(self):
         return self.__token
@@ -70,6 +75,17 @@ class JackTokenizer:
 
     def integer(self):
         return int(self.__token)
+
+    #convience method for returing the token
+    def token(self):
+        if self.__type == JackTokenizer.INT:
+            return self.integer()
+        elif self.__type == JackTokenizer.STRING:
+            return self.string()
+        elif self.__type == JackTokenizer.KEYWORD:
+            return self.keyword()
+        else:
+            return self.raw_token
     
     @property
     def type(self):
