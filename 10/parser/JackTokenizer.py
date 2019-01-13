@@ -17,7 +17,7 @@ class JackTokenizer:
         self.rules["keyword"]=re.compile("((class)|(constructor)|(function)|(method)|(field)|(static)|(var)|(int)|(char)|(boolean)|(void)|(true)|(false)|(null)|(this)|(let)|(do)|(if)|(else)|(while)|(return))\s")
         self.rules["identifier"]=re.compile("[A-Za-z_]\w*")
         self.rules["string"]=re.compile("\".*?\"")
-        self.rules["symbol"]=re.compile("[{}\(\)\[\]\.,;\+\-\*&\|<>=]") 
+        self.rules["symbol"]=re.compile("[{}\(\)\[\]\.,;\+\-\*&\|<>=/]") 
 
         self.rules["whitespace"]=re.compile("\s+")
         
