@@ -19,9 +19,14 @@ class CompilationEngine:
         self.__consume(JackTokenizer.KEYWORD,'class')
         self.__consume(JackTokenizer.IDENTIFIER,self.__tokenizer.identifier())
         self.__consume(JackTokenizer.SYMBOL,'{')
-    
-        while self.__tokenizer.type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in ('field','static'):
+
+        #process class var declarations
+        while self.__tokenizer.keyword() in ('field','static'):
             self.compileClassVarDec()
+
+        #process subroutine declarations
+        while  self.__tokenizer.keyword() in ('constructor','method','function'):
+            self.compileSubroutineDec()
 
 
         self.__consume(JackTokenizer.SYMBOL,'}')    
@@ -35,13 +40,10 @@ class CompilationEngine:
         t_type = self.__tokenizer.type
 
         #varable type can be a keyword constant or class name
-        if t_type == JackTokenizer.KEYWORD and self.__token.keyword() in ('int','char','boolean'):
-            self.__consume(JackTokenizer.KEYWORD,self.__tokenizer.keyword())
-        elif t_type == JackTokenizer.IDENTIFIER:
-            self.__consume(JackTokenizer.IDENTIFIER):
-            self.__consume(JackTokenizer.IDENTIFIER)
+        if t_type == JackTokenizer.KEYWORD:
+            self.__consume(JackTokenizer.KEYWORD,('int','char','boolean'))
         else:
-            raise Exception("Expected class identifier or boolean, int, or char declaration.  Recived: "+self.__tokenizer.raw_token)
+            self.__consume(JackTokenizer.IDENTIFIER)
 
         #consume the variable list
         #make sure their is at least one identifier
@@ -76,7 +78,4 @@ class CompilationEngine:
 
 
         
-        
-
-
-            
+    
