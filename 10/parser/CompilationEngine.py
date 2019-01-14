@@ -19,8 +19,8 @@ class CompilationEngine:
         self.__consume(JackTokenizer.KEYWORD,'class')
         self.__consume(JackTokenizer.IDENTIFIER,self.__tokenizer.identifier())
         self.__consume(JackTokenizer.SYMBOL,'{')
-        token = self.__tokenizer.token()
-        while token == 'static' or token == 'field':
+    
+        while self.__tokenizer.type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in ('field','static'):
             self.compileClassVarDec()
 
 
@@ -57,6 +57,10 @@ class CompilationEngine:
 
         #reset old parent to curent after returning
         self.__current_parent = old_parent
+
+    def compileSubroutineDec(self):
+
+
 
     #note: token is passed for checking that the token matches a specific
     #expected value.  The token recorded is taken from the tokenizer
