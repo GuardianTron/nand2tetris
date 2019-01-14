@@ -50,7 +50,7 @@ class CompilationEngine:
         self.__consume(JackTokenizer.IDENTIFIER)
         while self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ',':
             self.__consume(JackTokenizer.SYMBOL,',')
-            self.__cosumer(JackTokenizer.IDENTIFIER)
+            self.__consume(JackTokenizer.IDENTIFIER)
 
         #consume ending ';'
         self.__consume(JackTokenizer.SYMBOL,';')
@@ -61,13 +61,39 @@ class CompilationEngine:
         self.__current_parent = old_parent
 
     def compileSubroutineDec(self):
+        #save parent context for caller
+        old_parent = self.__current_parent
 
+        self.__current_parent = SubElement(self.__current_parent,'subroutineDec')
+        self.__consume(JackTokenizer.KEYWORD,('constructor','method','function'))
+
+        #handle return type
+        if self.__tokenizer.type == JackTokenizer.KEYWORD:
+            self.__consume(JackTokenizer.KEYWORD,'void')
+        else:
+            self.__consume(JackTokenizer.IDENTIFIER)
+
+        #handle expressions
+        self.__consume(JackTokenizer.SYMBOL,'(')
+        self.compileParameterList()
+        self.__consume(JackTokenizer.SYMBOL,')')        
+
+        #restore parent context for caller
+        self.__current_parent = old_parent
+
+    def compileParameterList(self):
+        old_parent = self.__current_parent
+        self.__current_parent = SubElement(self.__current_parent,'paramaterList')
+
+
+        self.__current_parent = old_parent
 
 
     #note: token is passed for checking that the token matches a specific
     #expected value.  The token recorded is taken from the tokenizer
     #thus, only pre-enumerated tokens such as symbols or keywords will use the 
     #token paramenter. 
+    #token can either be a single token or an array of possible values
     def __consume(self,t_type,token=""):
         #todo - implement error generation
 
