@@ -97,11 +97,15 @@ class CompilationEngine:
         old_parent = self.__current_parent
         self.__current_parent = SubElement(self.__current_parent,'subroutineBody')
         self.__consume(JackTokenizer.SYMBOL,'{')
-        
+
+        #handle optional variable declarations.
+        while self.__tokenizer.token() == 'var':
+            self.compileVarDec()  
+
+        self.compileStatements()
+             
 
         self.__consume(JackTokenizer.SYMBOL,'}')
-        
-        
         self.__current_parent = old_parent
 
     def compileVarDec(self):
@@ -121,6 +125,11 @@ class CompilationEngine:
 
         self.__current_parent = old_parent
 
+    def compileStatements(self):
+        old_parent = self.__current_parent
+        self.__current_parent = SubElement(self.__current_parent,'statements')
+
+        self.__current_parent = old_parent
 
 
     #note: token is passed for checking that the token matches a specific
