@@ -109,6 +109,14 @@ class CompilationEngine:
         self.__current_parent = SubElement(self.__current_parent,'varDec')
         self.__consume(JackTokenizer.KEYWORD,'var')
         self.__consumeTypeDec()
+        self.__consume(JackTokenizer.IDENTIFIER)
+        #handle multiple variables
+        while self.__tokenizer.token() == ',':
+            self.__consume(JackTokenizer.SYMBOL,',')
+            self.__consume(JackTokenizer.IDENTIFIER)
+
+        #finish declaration
+        self.__consume(JackTokenizer.SYMBOL,';')
 
 
         self.__current_parent = old_parent
