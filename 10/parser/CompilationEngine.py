@@ -85,6 +85,14 @@ class CompilationEngine:
         old_parent = self.__current_parent
         self.__current_parent = SubElement(self.__current_parent,'paramaterList')
 
+        #consume parameter list if any
+        if self.__tokenizer.type == JackTokenizer.IDENTIFIER:
+            self.__consume(JackTokenizer.IDENTIFIER)
+            #consume additional parameters
+            while self.__tokenizer.token() == ",":
+                self.__consume(JackTokenizer.SYMBOL,',')
+                self.__consume(JackTokenizer.IDENTIFIER)
+
 
         self.__current_parent = old_parent
 
