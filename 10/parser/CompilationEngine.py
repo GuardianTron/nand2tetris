@@ -130,15 +130,15 @@ class CompilationEngine:
         self.__current_parent = SubElement(self.__current_parent,'statements')
         while self.__tokenizer.type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in ('do','let','if','return','while'):
             token = self.__tokenizer.keyword()
-            if 'do':
+            if token == 'do':
                 self.compileDo()
-            elif 'let':
+            elif token == 'let':
                 self.compileLet()
-            elif 'if':
+            elif token == 'if':
                 self.compileIf()
-            elif 'return':
+            elif token == 'return':
                 self.compileReturn()
-            elif 'while':
+            elif token == 'while':
                 self.compileWhile()
 
         self.__current_parent = old_parent
