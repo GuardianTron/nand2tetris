@@ -143,6 +143,21 @@ class CompilationEngine:
 
         self.__current_parent = old_parent
 
+    def compileDo(self):
+        pass
+    
+    def compileLet(self):
+        pass
+
+    def compileIf(self):
+        pass
+
+    def compileReturn(self):
+        pass
+
+    def compileWhile(self):
+        pass
+
 
     #note: token is passed for checking that the token matches a specific
     #expected value.  The token recorded is taken from the tokenizer
