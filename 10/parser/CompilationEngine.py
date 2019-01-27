@@ -128,6 +128,18 @@ class CompilationEngine:
     def compileStatements(self):
         old_parent = self.__current_parent
         self.__current_parent = SubElement(self.__current_parent,'statements')
+        while self.__tokenizer.type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in ('do','let','if','return','while'):
+            token = self.__tokenizer.keyword()
+            if 'do':
+                self.compileDo()
+            elif 'let':
+                self.compileLet()
+            elif 'if':
+                self.compileIf()
+            elif 'return':
+                self.compileReturn()
+            elif 'while':
+                self.compileWhile()
 
         self.__current_parent = old_parent
 
