@@ -194,17 +194,7 @@ class CompilationEngine:
             self.__consume(JackTokenizer.IDENTIFIER) #if a variable, rest of conditionals will fall through
             t_type = self.__tokenizer.type
             if t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() in self.sub_call_op: #handle method and function calls
-                #handle class identifier if '.' avaiable
-                #by consuming token and then consuming and identifier
-                #then handle the actual function/method call by consuming parenthesis and 
-                #callind compileExpressionlist
-                if self.__tokenizer.symbol() == '.':
-                    self.__consume(JackTokenizer.SYMBOL,'.')
-                    self.__consume(JackTokenizer.IDENTIFIER)
-
-                self.__consume(JackTokenizer.SYMBOL,'(')
-                self.compileExpressionList()
-                self.__consume(JackTokenizer.SYMBOL,')')
+               self.compileSubroutineCall()
             elif t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == '[': #arrays
                 self.__consume(JackTokenizer.SYMBOL,'[')
                 self.compileExpression()
@@ -215,6 +205,26 @@ class CompilationEngine:
 
 
         self.__current_parent = old_parent
+
+    def compileSubroutineCall(self):
+        """
+           Handles parsing of the subroutine call
+           If the call is a method call, the identifier/this 
+           will have been consumed first by the called. 
+           Does not generate any tags beyond those consumed by 
+           consume. 
+        """
+        if self.__tokenizer.token == '.': #if method call, consume . and method name identifier
+            self.__consume(JackTokenizer.SYMBOL,'.')
+            self.__consume(JackTokenizer.IDENTIFIER)
+        #handle the actual function call portion -- Always runs
+        self.__consume(JackTokenizer.SYMBOL,'(')
+        self.compileExpressionList()
+        self.__consume(')')
+
+
+
+    
 
 
     #note: token is passed for checking that the token matches a specific
