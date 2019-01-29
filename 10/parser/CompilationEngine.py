@@ -5,6 +5,7 @@ class CompilationEngine:
     unary_op = set('-','~') #mathematical and logical negation
     sub_call_op = set('.','(') #used to determine
     key_const = set('true','false','null','this')
+    ops = set('+','-','*','/','&','|','<','>')
 
 
     def __init__(self,file):
@@ -167,7 +168,16 @@ class CompilationEngine:
         pass
 
     def compileExpression(self):
-        pass
+        old_parent = self.__current_parent
+        self.__current_parent = SubElement(old_parent,'expression')
+
+        self.compileTerm()
+        while self.__tokenizer.token in self.ops:
+            self.__consume(JackTokenizer.SYMBOL,self.ops)
+            self.compileTerm()
+
+
+        self.__current_parent = old_parent
 
     def compileTerm(self):
         """Compiles individual terms. Terms can be recursively defined"""
