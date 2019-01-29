@@ -2,6 +2,11 @@ from JackTokenizer import JackTokenizer
 from xml.etree.ElementTree import Element,SubElement
 class CompilationEngine:
 
+    unary_op = set('-','~') #mathematical and logical negation
+    sub_call_op = set('.','(') #used to determine
+    key_const = set('true','false','null','this')
+
+
     def __init__(self,file):
         self.__tokenizer = JackTokenizer(file)
         #holds XML root
@@ -157,6 +162,59 @@ class CompilationEngine:
 
     def compileWhile(self):
         pass
+
+    def compileSubroutineCall(self):
+        pass
+
+    def compileExpressionList(self):
+        pass
+
+    def compileExpression(self):
+        pass
+
+    def compileTerm(self):
+        """Compiles individual terms. Terms can be recursively defined"""
+        old_parent = self.__current_parent
+        self.__current_parent = SubElement(old_parent,'term')
+        t_type = self.__tokenizer.type
+        if t_type == JackTokenizer.INT:
+            self.__consume(JackTokenizer.INT)
+        elif t_type == JackTokenizer.STRING:
+            self.__consume(JackTokenizer.STRING)
+        elif t_type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in self.key_const: #true,false,null,this
+            self.__consume(JackTokenizer.KEYWORD,self.key_const)
+        elif t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == '(':   #assume parenthesis by itself starts an expression
+            self.__consume(JackTokenizer.SYMBOL,'(')
+            self.compileExpression()
+            self.__consume(JackTokenizer.SYMBOL,')')
+        elif t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() in self.unary_op: # example mathematical negation of an expression -- call term again
+            self.__consume(JackTokenizer.SYMBOL,self.unary_op)
+            self.compileTerm()
+        elif t_type == JackTokenizer.IDENTIFIER: #can be a variable, array, or function call
+            self.__consume(JackTokenizer.IDENTIFIER) #if a variable, rest of conditionals will fall through
+            t_type = self.__tokenizer.type
+            if t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() in self.sub_call_op: #handle method and function calls
+                #handle class identifier if '.' avaiable
+                #by consuming token and then consuming and identifier
+                #then handle the actual function/method call by consuming parenthesis and 
+                #callind compileExpressionlist
+                if self.__tokenizer.symbol() == '.':
+                    self.__consume(JackTokenizer.SYMBOL,'.')
+                    self.__consume(JackTokenizer.IDENTIFIER)
+
+                self.__consume(JackTokenizer.SYMBOL,'(')
+                self.compileExpressionList()
+                self.__consume(JackTokenizer.SYMBOL,')')
+            elif t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == '[': #arrays
+                self.__consume(JackTokenizer.SYMBOL,'[')
+                self.compileExpression()
+                self.__consume(JackTokenizer.SYMBOL,']')
+             
+                
+            
+
+
+        self.__current_parent = old_parent
 
 
     #note: token is passed for checking that the token matches a specific
