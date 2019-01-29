@@ -163,9 +163,6 @@ class CompilationEngine:
     def compileWhile(self):
         pass
 
-    def compileSubroutineCall(self):
-        pass
-
     def compileExpressionList(self):
         pass
 
