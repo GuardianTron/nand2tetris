@@ -22,7 +22,7 @@ class JackTokenizer:
         self.__rules["keyword"]=re.compile("((class)|(constructor)|(function)|(method)|(field)|(static)|(var)|(int)|(char)|(boolean)|(void)|(true)|(false)|(null)|(this)|(let)|(do)|(if)|(else)|(while)|(return))\s")
         self.__rules["identifier"]=re.compile("[A-Za-z_]\w*")
         self.__rules["stringConstant"]=re.compile("\".*?\"")
-        self.__rules["symbol"]=re.compile("[{}\(\)\[\]\.,;\+\-\*&\|<>=/]") 
+        self.__rules["symbol"]=re.compile("[{}\(\)\[\]\.,;\+\-\*&\|<>=/~]") 
         self.__rules["whitespace"]=re.compile("\s+")
 
 
