@@ -179,7 +179,11 @@ class CompilationEngine:
         elif t_type == JackTokenizer.STRING:
             self.__consume(JackTokenizer.STRING)
         elif t_type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in self.key_const: #true,false,null,this
+            #consume the keyword, but save in case it is part of a method call on 'this'
+            token = self.__consume(JackTokenizer.KEYWORD,self.key_const)
             self.__consume(JackTokenizer.KEYWORD,self.key_const)
+            if token == 'this' and self.__tokenizer.token == '.':
+                self.compileSubroutineCall()
         elif t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == '(':   #assume parenthesis by itself starts an expression
             self.__consume(JackTokenizer.SYMBOL,'(')
             self.compileExpression()
