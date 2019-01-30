@@ -1,4 +1,4 @@
-from JackTokenizer import JackTokenizer
+from JackTokenizer import JackTokenizer,JackTokenizerRewind
 from xml.etree.ElementTree import Element,SubElement
 class CompilationEngine:
 
@@ -9,7 +9,7 @@ class CompilationEngine:
 
 
     def __init__(self,file):
-        self.__tokenizer = JackTokenizer(file)
+        self.__tokenizer = JackTokenizerRewind(file)
         #holds XML root
         self.__root = None
         #holds the current parent node
@@ -264,7 +264,7 @@ class CompilationEngine:
 
     def __isPossibleTerm(self):
         "Tests to see if the token could be the start of a term"
-        
+
 
 
         
