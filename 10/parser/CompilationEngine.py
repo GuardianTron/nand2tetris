@@ -262,6 +262,10 @@ class CompilationEngine:
             self.__consume(JackTokenizer.IDENTIFIER)
 
 
+    def __isPossibleTerm(self):
+        "Tests to see if the token could be the start of a term"
+        
+
 
         
     

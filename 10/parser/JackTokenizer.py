@@ -91,10 +91,52 @@ class JackTokenizer:
     def type(self):
         return self.__type
 
+    @type.setter
+    def type(self,t_type):
+        self.__type = t_type
+
     @property 
     def raw_token(self):
         return self.__token
 
+    @raw_token.setter
+    def raw_token(self,token):
+        self.__token = token
+
+
+class JackTokenizerRewind(JackTokenizer):
+    """Tokenizes Jack program files. 
+        Adds ability to move backward 
+        and forwad through the token stream."""
+
+    def __init__(self,filename):
+        super().__init__(filename)
+        self.__tokens = []
+        self.__index = 0
+
+    def advance(self):
+        "Advance to the next token"
+        #revisiting already scanned tokens
+        if self.__index < len(self.__tokens):
+            self.__index+=1
+            #set the current token for return
+            self.type,self.raw_token = self.__tokens[self.__index]
+            return True
+        elif super().advance():
+                self.__index = len(sef.__tokens)
+                self.__tokens.append((self.type,self.raw_token))
+                return True
+        return False
+    
+    def rewind(self):
+        "Move backwards through stack. Returns true if not at bottom"
+        if self.__index > 0:
+            self.__index -= 1
+            #set current token
+            self.type, self.raw_token = self.__token[self.__index]
+            return True
+        return False
+                
 
 
 
