@@ -190,10 +190,18 @@ class CompilationEngine:
             self.__consume(JackTokenizer.STRING)
         elif t_type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in self.key_const: #true,false,null,this
             #consume the keyword, but save in case it is part of a method call on 'this'
-            token = self.__consume(JackTokenizer.KEYWORD,self.key_const)
-            self.__consume(JackTokenizer.KEYWORD,self.key_const)
-            if token == 'this' and self.__tokenizer.token == '.':
+            token = self.__tokenizer.keyword()
+            #obtain next token for testing if it is a method call on this
+            self.__tokenizer.advance()
+            next_token = self.__tokenizer.token()
+            #restore keyword token for later consumption
+            self.__tokenizer.rewind()
+            
+            if token == 'this' and  next_token == '.': #method call
                 self.compileSubroutineCall()
+            else: #single keyword
+                self.__consume(JackTokenizer.KEYWORD,self.key_const)
+
         elif t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == '(':   #assume parenthesis by itself starts an expression
             self.__consume(JackTokenizer.SYMBOL,'(')
             self.compileExpression()
@@ -202,14 +210,15 @@ class CompilationEngine:
             self.__consume(JackTokenizer.SYMBOL,self.unary_op)
             self.compileTerm()
         elif t_type == JackTokenizer.IDENTIFIER: #can be a variable, array, or function call
-            self.__consume(JackTokenizer.IDENTIFIER) #if a variable, rest of conditionals will fall through
+            self.__tokenizer.advance() #if a variable, rest of conditionals will fall through
             t_type = self.__tokenizer.type
-            if t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() in self.sub_call_op: #handle method and function calls
+            token = self.__tokenizer.token()
+            self.__tokenizer.rewind() #rewind back to identifier for processing methods to consume
+            if t_type == JackTokenizer.SYMBOL and token in self.sub_call_op: #handle method and function calls
                self.compileSubroutineCall()
-            elif t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == '[': #arrays
-                self.__consume(JackTokenizer.SYMBOL,'[')
-                self.compileExpression()
-                self.__consume(JackTokenizer.SYMBOL,']')
+            else: #if not a method call, assume variable or array
+                self.compileVariable()
+            
              
                 
             
@@ -235,6 +244,15 @@ class CompilationEngine:
         self.__consume(JackTokenizer.SYMBOL,'(')
         self.compileExpressionList()
         self.__consume(')')
+
+    def compileVariable(self):
+        """Compile a variable and array declaration."""
+        self.__consume(JackTokenizer.IDENTIFIER)
+        if t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == '[': #arrays
+            self.__consume(JackTokenizer.SYMBOL,'[')
+            self.compileExpression()
+            self.__consume(JackTokenizer.SYMBOL,']')
+
 
 
 
