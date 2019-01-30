@@ -150,7 +150,15 @@ class CompilationEngine:
         self.__current_parent = old_parent
 
     def compileDo(self):
-        pass
+        old_parent = self.__current_parent
+        self.__current_parent = SubElement(old_parent,"doStatement")
+
+        self.__consume(JackTokenizer.SYMBOL,"do")
+        self.compileSubroutineCall()
+        self.__consume(JackTokenizer.SYMBOL,";")
+
+
+        self.__current_parent = old_parent
     
     def compileLet(self):
         """compiles let statements.""""
