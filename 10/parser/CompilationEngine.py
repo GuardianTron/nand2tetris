@@ -220,12 +220,15 @@ class CompilationEngine:
     def compileSubroutineCall(self):
         """
            Handles parsing of the subroutine call
-           If the call is a method call, the identifier/this 
-           will have been consumed first by the called. 
-           Does not generate any tags beyond those consumed by 
-           consume. 
         """
-        if self.__tokenizer.token == '.': #if method call, consume . and method name identifier
+        t_type = self.__tokenizer.type
+        if t_type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() == 'this': #handle this identifier
+            self.__consume(JackTokenizer.KEYWORD,'this')
+        else: #assume an identifier
+            self.__consume(JackTokenizer.IDENTIFIER)
+
+
+        if self.__tokenizer.token() == '.': #if method call, consume . and method name identifier
             self.__consume(JackTokenizer.SYMBOL,'.')
             self.__consume(JackTokenizer.IDENTIFIER)
         #handle the actual function call portion -- Always runs
