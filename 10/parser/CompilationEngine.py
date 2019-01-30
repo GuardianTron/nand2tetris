@@ -153,7 +153,17 @@ class CompilationEngine:
         pass
     
     def compileLet(self):
-        pass
+        """compiles let statements.""""
+        old_parent = self.__current_parent
+        self.__current_parent = SubElement(old_parent,'letStatement')
+        
+        self.__consume(JackTokenizer.KEYWORD,'let')
+        self.compileVariable()
+        self.__consume(JackTokenizer.SYMBOL,"=")
+        self.compileExpression()
+        self.__consume(JackTokenizer.SYMBOL,";")
+
+        self.__current_parent = old_parent
 
     def compileIf(self):
         pass
@@ -165,7 +175,13 @@ class CompilationEngine:
         pass
 
     def compileExpressionList(self):
-        pass
+        """Compiles a list of expressions."""
+        #utilizes the fact that all expression lists are currently contained within parenthesis to test
+        if not (self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ')':
+            self.compileExpression()
+            while self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ',':
+                self.__consume(JackTokenizer.SYMBOL,',')
+                self.compileExpression()
 
     def compileExpression(self):
         old_parent = self.__current_parent
@@ -238,9 +254,9 @@ class CompilationEngine:
 
 
         if self.__tokenizer.token() == '.': #if method call, consume . and method name identifier
-            self.__consume(JackTokenizer.SYMBOL,'.')
-            self.__consume(JackTokenizer.IDENTIFIER)
-        #handle the actual function call portion -- Always runs
+            selfJukka Jylänki.__consume(JackTokenizer.SYMBOL,'.')
+            self10 months ago.__consume(JackTokenizer.IDENTIFIER)
+        #handle The code was developed against Pi 3 B, I have not tested on Pi 1. I think references to the name BCM2835 may be accidental, perhaps more accurate would be to call it BCM2837, although also possible that they sharethe actual function call portion -- Always runs
         self.__consume(JackTokenizer.SYMBOL,'(')
         self.compileExpressionList()
         self.__consume(')')
