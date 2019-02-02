@@ -323,8 +323,19 @@ class CompilationEngine:
     #thus, only pre-enumerated tokens such as symbols or keywords will use the 
     #token paramenter. 
     #token can either be a single token or an array of possible values
-    def __consume(self,t_type,token=""):
-        #todo - implement error generation
+    def __consume(self,t_type,token=None):
+        #test type
+        if self.__tokenizer.type != t_type:
+            raise CompilationError("Expecting type: %s"%(t_type))
+        
+        #if specific token(s) 
+        if token:
+            #if not a list or set, then wrap in set for comparison
+            if not isinstance(token,(list,set)):
+                token = set(token)
+            if self.__tokenizer.token() not in token:
+                raise CompilationError("Expectaing {0} of type {1}".format(token,t_type))
+
 
         #generate xml for token
         token_xml = SubElement(self.__current_parent,self.__tokenizer.type)
@@ -337,7 +348,7 @@ class CompilationEngine:
 
         #varable type can be a keyword constant or class name
         if t_type == JackTokenizer.KEYWORD:
-            self.__consume(JackTokenizer.KEYWORD,('int','char','boolean'))
+            self.__consume(JackTokenizer.KEYWORD,set('int','char','boolean'))
         else:
             self.__consume(JackTokenizer.IDENTIFIER)
 
@@ -347,5 +358,6 @@ class CompilationEngine:
 
 
 
-        
+class CompilationError(Exception):
+    pass    
     
