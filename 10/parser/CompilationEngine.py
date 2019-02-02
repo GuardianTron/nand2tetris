@@ -8,6 +8,22 @@ class CompilationEngine:
     ops = set('+','-','*','/','&','|','<','>')
 
 
+    def xml_decorator(node_name):
+        """ Adds xml generation code to called compilation objects.
+            Manages the node tree for the function, creating a new
+            subnode provided by the name and placing it as the current subnode.
+            Once the decorated function is done executing, the original parent is
+            restored to status of current node.
+            """
+        def decorator(func):
+            def wrapper(self):
+                old_parent = self.__current_parent
+                self.__current_parent = SubElement(old_parent,node_name)
+                func(self)
+                self.__current_parent = old_parent
+            return wrapper
+        return decorator
+
     def __init__(self,file):
         self.__tokenizer = JackTokenizerRewind(file)
         #holds XML root
@@ -40,9 +56,9 @@ class CompilationEngine:
 
         self.__consume(JackTokenizer.SYMBOL,'}')    
 
+    @xml_decorator("classVarDec")
     def compileClassVarDec(self):
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(old_parent,'classVarDec')
+
         self.__consume(JackTokenizer.KEYWORD,self.__tokenizer.keyword()) #static or field
 
 
@@ -59,15 +75,9 @@ class CompilationEngine:
         self.__consume(JackTokenizer.SYMBOL,';')
 
 
-
-        #reset old parent to curent after returning
-        self.__current_parent = old_parent
-
+    @xml_decorator("subroutineDec")
     def compileSubroutineDec(self):
-        #save parent context for caller
-        old_parent = self.__current_parent
 
-        self.__current_parent = SubElement(self.__current_parent,'subroutineDec')
         self.__consume(JackTokenizer.KEYWORD,('constructor','method','function'))
 
         #handle return type
@@ -84,12 +94,8 @@ class CompilationEngine:
         #move onto subroutineBody
         self.compileSubroutineBody()       
 
-        #restore parent context for caller
-        self.__current_parent = old_parent
-
+    @xml_decorator("parameterList")
     def compileParameterList(self):
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(self.__current_parent,'paramaterList')
 
         #consume parameter list if any
         if self.__tokenizer.type == JackTokenizer.IDENTIFIER:
@@ -99,12 +105,9 @@ class CompilationEngine:
                 self.__consume(JackTokenizer.SYMBOL,',')
                 self.__consume(JackTokenizer.IDENTIFIER)
 
-
-        self.__current_parent = old_parent
-
+    @xml_decorator("subroutineBody")
     def compileSubroutineBody(self):
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(self.__current_parent,'subroutineBody')
+
         self.__consume(JackTokenizer.SYMBOL,'{')
 
         #handle optional variable declarations.
@@ -115,11 +118,10 @@ class CompilationEngine:
              
 
         self.__consume(JackTokenizer.SYMBOL,'}')
-        self.__current_parent = old_parent
 
+    @xml_decorator("varDec")
     def compileVarDec(self):
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(self.__current_parent,'varDec')
+
         self.__consume(JackTokenizer.KEYWORD,'var')
         self.__consumeTypeDec()
         self.__consume(JackTokenizer.IDENTIFIER)
@@ -131,12 +133,9 @@ class CompilationEngine:
         #finish declaration
         self.__consume(JackTokenizer.SYMBOL,';')
 
-
-        self.__current_parent = old_parent
-
+    @xml_decorator("statements")
     def compileStatements(self):
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(self.__current_parent,'statements')
+
         while self.__tokenizer.type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in ('do','let','if','return','while'):
             token = self.__tokenizer.keyword()
             if token == 'do':
@@ -150,35 +149,24 @@ class CompilationEngine:
             elif token == 'while':
                 self.compileWhile()
 
-        self.__current_parent = old_parent
-
+    @xml_decorator("doStatement")
     def compileDo(self):
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(old_parent,"doStatement")
-
         self.__consume(JackTokenizer.SYMBOL,"do")
         self.compileSubroutineCall()
         self.__consume(JackTokenizer.SYMBOL,";")
-
-
-        self.__current_parent = old_parent
     
+    @xml_decorator("letStatement")
     def compileLet(self):
         """compiles let statements.""""
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(old_parent,'letStatement')
-        
+
         self.__consume(JackTokenizer.KEYWORD,'let')
         self.compileVariable()
         self.__consume(JackTokenizer.SYMBOL,"=")
         self.compileExpression()
         self.__consume(JackTokenizer.SYMBOL,";")
 
-        self.__current_parent = old_parent
-
+    @xml_decorator("ifStatement")
     def compileIf(self):
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(old_parent,'ifStatement')
 
         self.__consume(JackTokenizer.KEYWORD,'if')
         self.__consume(JackTokenizer.SYMBOL,'{')
@@ -191,25 +179,16 @@ class CompilationEngine:
             self.compileStatements()
             self.__consume(JackTokenizer.SYMBOL,'}')
 
-        self.__current_parent = old_parent
-
+    @xml_decorator("returnStatement")
     def compileReturn(self):
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(old_parent,'returnStatement')
-
         self.__consume(JackTokenizer.KEYWORD,'return')
         #not an emptry return, so compile expression
         if not (self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ';'):
             self.compileExpression()
         self.__consume(JackTokenizer.SYMBOL,';')
 
-
-        self.__current_parent = old_parent
-
+    @xml_decorator("whileStatement")
     def compileWhile(self):
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(old_parent,'whileStatement')
-
         self.__consume(JackTokenizer.KEYWORD,'while')
         self.__consume(JackTokenizer.SYMBOL,'(')
         self.compileExpression()
@@ -218,8 +197,7 @@ class CompilationEngine:
         self.compileStatements()
         self.__consume(JackTokenizer.SYMBOL,'}')
 
-        self.__current_parent = old_parent 
-
+    @xml_decorator("expressionList")
     def compileExpressionList(self):
         """Compiles a list of expressions."""
         #utilizes the fact that all expression lists are currently contained within parenthesis to test
@@ -229,22 +207,16 @@ class CompilationEngine:
                 self.__consume(JackTokenizer.SYMBOL,',')
                 self.compileExpression()
     
+    @xml_decorator("expression")
     def compileExpression(self):
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(old_parent,'expression')
-
         self.compileTerm()
         while self.__tokenizer.token in self.ops:
             self.__consume(JackTokenizer.SYMBOL,self.ops)
             self.compileTerm()
 
-
-        self.__current_parent = old_parent
-
+    @xml_decorator("term")
     def compileTerm(self):
         """Compiles individual terms. Terms can be recursively defined"""
-        old_parent = self.__current_parent
-        self.__current_parent = SubElement(old_parent,'term')
         t_type = self.__tokenizer.type
         if t_type == JackTokenizer.INT:
             self.__consume(JackTokenizer.INT)
@@ -280,13 +252,6 @@ class CompilationEngine:
                self.compileSubroutineCall()
             else: #if not a method call, assume variable or array
                 self.compileVariable()
-            
-             
-                
-            
-
-
-        self.__current_parent = old_parent
 
     def compileSubroutineCall(self):
         """
