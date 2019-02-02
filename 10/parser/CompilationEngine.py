@@ -225,7 +225,6 @@ class CompilationEngine:
             while self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ',':
                 self.__consume(JackTokenizer.SYMBOL,',')
                 self.compileExpression()
-
     def compileExpression(self):
         old_parent = self.__current_parent
         self.__current_parent = SubElement(old_parent,'expression')
