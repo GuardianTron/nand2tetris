@@ -174,7 +174,21 @@ class CompilationEngine:
         self.__current_parent = old_parent
 
     def compileIf(self):
-        pass
+        old_parent = self.__current_parent
+        self.__current_parent = SubElement(old_parent,'ifStatement')
+
+        self.__consume(JackTokenizer.KEYWORD,'if')
+        self.__consume(JackTokenizer.SYMBOL,'{')
+        self.compileStatements()
+        self.__consume(JackTokenizer.SYMBOL,"}")
+
+        if self.__tokenizer.type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() == 'else':
+            self.__consume(JackTokenizer.KEYWORD,'else')
+            self.__consume(JackTokenizer.SYMBOL,'{')
+            self.compileStatements()
+            self.__consume(JackTokenizer.SYMBOL,'}')
+
+        self.__current_parent = old_parent
 
     def compileReturn(self):
         pass
