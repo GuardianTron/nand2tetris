@@ -194,7 +194,18 @@ class CompilationEngine:
         pass
 
     def compileWhile(self):
-        pass
+        old_parent = self.__current_parent
+        self.__current_parent = SubElement(old_parent,'whileStatement')
+
+        self.__consume(JackTokenizer.KEYWORD,'while')
+        self.__consume(JackTokenizer.SYMBOL,'(')
+        self.compileExpression()
+        self.__consume(JackTokenizer.SYMBOL,')')
+        self.__consume(JackTokenizer.STRING,'{')
+        self.compileStatements()
+        self.__consume(JackTokenizer.SYMBOL,'}')
+
+        self.__current_parent = old_parent 
 
     def compileExpressionList(self):
         """Compiles a list of expressions."""
