@@ -297,8 +297,8 @@ class CompilationEngine:
 
 
         if self.__tokenizer.token() == '.': #if method call, consume . and method name identifier
-            selfJukka Jylänki.__consume(JackTokenizer.SYMBOL,'.')
-            self10 months ago.__consume(JackTokenizer.IDENTIFIER)
+            self.__consume(JackTokenizer.SYMBOL,'.')
+            self.__consume(JackTokenizer.IDENTIFIER)
         #handle The code was developed against Pi 3 B, I have not tested on Pi 1. I think references to the name BCM2835 may be accidental, perhaps more accurate would be to call it BCM2837, although also possible that they sharethe actual function call portion -- Always runs
         self.__consume(JackTokenizer.SYMBOL,'(')
         self.compileExpressionList()
