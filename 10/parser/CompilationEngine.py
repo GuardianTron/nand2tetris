@@ -19,6 +19,9 @@ class CompilationEngine:
         if self.__tokenizer.advance():
             self.compileClass()
 
+    def getXML(self):
+        return self.__root
+
     def compileClass(self):
         self.__root = Element('class')
         self.__current_parent = self.__root
@@ -225,6 +228,7 @@ class CompilationEngine:
             while self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ',':
                 self.__consume(JackTokenizer.SYMBOL,',')
                 self.compileExpression()
+    
     def compileExpression(self):
         old_parent = self.__current_parent
         self.__current_parent = SubElement(old_parent,'expression')
@@ -351,9 +355,6 @@ class CompilationEngine:
         else:
             self.__consume(JackTokenizer.IDENTIFIER)
 
-
-    def __isPossibleTerm(self):
-        "Tests to see if the token could be the start of a term"
 
 
 
