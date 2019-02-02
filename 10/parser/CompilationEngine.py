@@ -191,7 +191,17 @@ class CompilationEngine:
         self.__current_parent = old_parent
 
     def compileReturn(self):
-        pass
+        old_parent = self.__current_parent
+        self.__current_parent = SubElement(old_parent,'returnStatement')
+
+        self.__consume(JackTokenizer.KEYWORD,'return')
+        #not an emptry return, so compile expression
+        if not (self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ';'):
+            self.compileExpression()
+        self.__consume(JackTokenizer.SYMBOL,';')
+
+
+        self.__current_parent = old_parent
 
     def compileWhile(self):
         old_parent = self.__current_parent
