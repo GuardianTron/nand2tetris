@@ -24,7 +24,7 @@ class JackTokenizer:
         key_regex = "(%s)(\s|;)"%("|".join(["(%s)"%(key) for key in self.keywords]))
 
         self.__rules = {}
-        self.__rules["comment"]=re.compile("(//.*\r?\n)|(/\*.*?\*/)")
+        self.__rules["comment"]=re.compile("(//.*?\r?\n)|(/\*.*?(\*/))",re.DOTALL)
         self.__rules["integerConstant"]=re.compile("\d+")
         self.__rules["keyword"]=re.compile(key_regex)
         self.__rules["identifier"]=re.compile("[A-Za-z_]\w*")
@@ -44,7 +44,7 @@ class JackTokenizer:
         while self.__start < len(self.__file) and (current_type == "" or current_type == "whitespace" or current_type == "comment"):
             match = self.__scan_token()
             if not match:
-                raise Exception("No valid token found")
+                raise Exception("No valid token found\n"+self.__file[self.__start:])
             current_type = match[0]
             current_token =  match[1]
 
