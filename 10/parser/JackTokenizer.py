@@ -66,7 +66,7 @@ class JackTokenizer:
                 self.__start = match.end() #reset start point for matching
                 match_string = match.group(0)
                 if rule == "keyword":
-                     #Keywords will consume an extra space or ;
+                     #Keywords will consume an extra non alphanumeric/underscore character
                     #Remove this extra character and handle the matches appropriately
                     self.__start -= 1
                     match_string = match_string[:-1]
