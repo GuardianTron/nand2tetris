@@ -21,8 +21,7 @@ class JackTokenizer:
         self.__rule_order = ("comment","integerConstant","keyword","identifier","stringConstant","symbol","whitespace")
 
         #create the keyword regex
-        key_regex = "(%s)(\s|;)"%("|".join(["(%s)"%(key) for key in self.keywords]))
-
+        key_regex = "(%s)\W"%("|".join(["(%s)"%(key) for key in self.keywords]))
         self.__rules = {}
         self.__rules["comment"]=re.compile("(//.*?\r?\n)|(/\*.*?(\*/))",re.DOTALL)
         self.__rules["integerConstant"]=re.compile("\d+")
@@ -168,7 +167,7 @@ if __name__ == "__main__":
 
         #save the xml output
         base_name = os.path.basename(f_name).split(".")[0]
-        xml_name = os.path.join(os.path.dirname(f_name),base_name+"_test.xml")
+        xml_name = os.path.join(os.path.dirname(f_name),base_name+"T_test.xml")
         with open(xml_name,'w') as doc:
             doc.write(ET.tostring(root,'unicode'))
     except Exception as e:
