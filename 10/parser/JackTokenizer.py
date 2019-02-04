@@ -153,8 +153,8 @@ if __name__ == "__main__":
 
         #save the xml output
         base_name = os.path.basename(f_name).split(".")[0]
-        xml_name = os.path.join(os.path.dirname(f_name),basename+".xml")
-        with open(xml_name,w) as doc:
+        xml_name = os.path.join(os.path.dirname(f_name),base_name+"_test.xml")
+        with open(xml_name,'w') as doc:
             doc.write(str(doc))
     except Exception as e:
         print(e)
