@@ -8,18 +8,25 @@ class JackTokenizer:
     STRING = "stringConstant"
     SYMBOL = "symbol"
 
+    keywords = ["class","constructor","function","method","field","static","var","int","char","boolean","void","true","false","null","this","let","do","if","else","while","return"]
+
 
     def __init__(self,filename):
         with open(filename) as fh:
             self.__file = fh.read()
 
+
+
         #ensure rules execute in order
         self.__rule_order = ("comment","integerConstant","keyword","identifier","stringConstant","symbol","whitespace")
+
+        #create the keyword regex
+        key_regex = "(%s)(\s|;)"%("|".join(["(%s)"%(key) for key in self.keywords]))
 
         self.__rules = {}
         self.__rules["comment"]=re.compile("(//.*\r?\n)|(/\*.*?\*/)")
         self.__rules["integerConstant"]=re.compile("\d+")
-        self.__rules["keyword"]=re.compile("((class)|(constructor)|(function)|(method)|(field)|(static)|(var)|(int)|(char)|(boolean)|(void)|(true)|(false)|(null)|(this)|(let)|(do)|(if)|(else)|(while)|(return))\s")
+        self.__rules["keyword"]=re.compile(key_regex)
         self.__rules["identifier"]=re.compile("[A-Za-z_]\w*")
         self.__rules["stringConstant"]=re.compile("\".*?\"")
         self.__rules["symbol"]=re.compile("[{}\(\)\[\]\.,;\+\-\*&\|<>=/~]") 
@@ -142,20 +149,21 @@ class JackTokenizerRewind(JackTokenizer):
 if __name__ == "__main__":
     from sys import argv
     import os.path
-    from xml.etree.ElementTree import Element,SubElement
+    from xml.etree.ElementTree import Element,SubElement,ElementTree
+    from xml.etree import ElementTree as ET
     try:
         f_name = argv[1]
         tokenizer = JackTokenizerRewind(argv[1])
         root = Element('tokens')
         while tokenizer.advance():
             token_element = SubElement(root,tokenizer.type)
-            token_element.text = str(tokenizer.token())
+            token_element.text = " "+str(tokenizer.token())+" "
 
         #save the xml output
         base_name = os.path.basename(f_name).split(".")[0]
         xml_name = os.path.join(os.path.dirname(f_name),base_name+"_test.xml")
         with open(xml_name,'w') as doc:
-            doc.write(str(root))
+            doc.write(ET.tostring(root,'unicode'))
     except Exception as e:
         print(e)
         raise e
