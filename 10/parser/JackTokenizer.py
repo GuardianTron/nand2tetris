@@ -65,7 +65,7 @@ class JackTokenizer:
         return self.__token
 
     def keyword(self):
-        return self.__token.trim()
+        return self.__token.strip()
 
     def identifier(self):
         return self.__token
@@ -112,18 +112,18 @@ class JackTokenizerRewind(JackTokenizer):
     def __init__(self,filename):
         super().__init__(filename)
         self.__tokens = []
-        self.__index = 0
+        self.__index = -1
 
     def advance(self):
         "Advance to the next token"
         #revisiting already scanned tokens
-        if self.__index < len(self.__tokens):
+        if self.__index < len(self.__tokens) - 1:
             self.__index+=1
             #set the current token for return
             self.type,self.raw_token = self.__tokens[self.__index]
             return True
         elif super().advance():
-                self.__index = len(sef.__tokens)
+                self.__index = len(self.__tokens)
                 self.__tokens.append((self.type,self.raw_token))
                 return True
         return False
@@ -144,7 +144,7 @@ if __name__ == "__main__":
     import os.path
     from xml.etree.ElementTree import Element,SubElement
     try:
-        f_name = arg[v1]
+        f_name = argv[1]
         tokenizer = JackTokenizerRewind(argv[1])
         root = Element('tokens')
         while tokenizer.advance():
@@ -155,9 +155,10 @@ if __name__ == "__main__":
         base_name = os.path.basename(f_name).split(".")[0]
         xml_name = os.path.join(os.path.dirname(f_name),base_name+"_test.xml")
         with open(xml_name,'w') as doc:
-            doc.write(str(doc))
+            doc.write(str(root))
     except Exception as e:
         print(e)
+        raise e
 
         
 
