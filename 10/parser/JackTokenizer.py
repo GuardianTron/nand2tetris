@@ -139,6 +139,29 @@ class JackTokenizerRewind(JackTokenizer):
                 
 
 
+if __name__ == "__main__":
+    from sys import argv
+    import os.path
+    from xml.etree.ElementTree import Element,SubElement
+    try:
+        f_name = arg[v1]
+        tokenizer = JackTokenizerRewind(argv[1])
+        root = Element('tokens')
+        while tokenizer.advance():
+            token_element = SubElement(root,tokenizer.type)
+            token_element.text = str(tokenizer.token())
+
+        #save the xml output
+        base_name = os.path.basename(f_name).split(".")[0]
+        xml_name = os.path.join(os.path.dirname(f_name),basename+".xml")
+        with open(xml_name,w) as doc:
+            doc.write(str(doc))
+    except Exception as e:
+        print(e)
+
+        
+
+
 
 
         
