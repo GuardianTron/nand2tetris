@@ -63,8 +63,15 @@ class JackTokenizer:
         for rule in self.__rule_order:
             match = self.__rules[rule].match(self.__file,self.__start)
             if match:
+               
                 self.__start = match.end() #reset start point for matching
-                match_tuple = (rule,match.group(0))
+                match_string = match.group(0)
+                if rule == "keyword":
+                     #Keywords will consume an extra space or ;
+                    #Remove this extra character and handle the matches appropriately
+                    self.__start -= 1
+                    match_string = match_string[:-1]
+                match_tuple = (rule,match_string)
                 break
         return match_tuple
 
@@ -153,7 +160,7 @@ if __name__ == "__main__":
     from xml.etree import ElementTree as ET
     try:
         f_name = argv[1]
-        tokenizer = JackTokenizerRewind(argv[1])
+        tokenizer = JackTokenizer(argv[1])
         root = Element('tokens')
         while tokenizer.advance():
             token_element = SubElement(root,tokenizer.type)
