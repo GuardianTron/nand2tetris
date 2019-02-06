@@ -7,6 +7,8 @@ class JackTokenizer:
     IDENTIFIER = "indentifier"
     STRING = "stringConstant"
     SYMBOL = "symbol"
+    WHITESPACE = "whitespace"
+    COMMENT = "comment"
 
     keywords = ["class","constructor","function","method","field","static","var","int","char","boolean","void","true","false","null","this","let","do","if","else","while","return"]
 
@@ -18,18 +20,18 @@ class JackTokenizer:
 
 
         #ensure rules execute in order
-        self.__rule_order = ("comment","integerConstant","keyword","identifier","stringConstant","symbol","whitespace")
+        self.__rule_order = (self.COMMENT,self.INT,self.KEYWORD,self.IDENTIFIER,self.STRING,self.SYMBOL,self.WHITESPACE)
 
         #create the keyword regex
         key_regex = "(%s)\W"%("|".join(["(%s)"%(key) for key in self.keywords]))
         self.__rules = {}
-        self.__rules["comment"]=re.compile("(//.*?\r?\n)|(/\*.*?(\*/))",re.DOTALL)
-        self.__rules["integerConstant"]=re.compile("\d+")
-        self.__rules["keyword"]=re.compile(key_regex)
-        self.__rules["identifier"]=re.compile("[A-Za-z_]\w*")
-        self.__rules["stringConstant"]=re.compile("\".*?\"")
-        self.__rules["symbol"]=re.compile("[{}\(\)\[\]\.,;\+\-\*&\|<>=/~]") 
-        self.__rules["whitespace"]=re.compile("\s+")
+        self.__rules[self.COMMENT]=re.compile("(//.*?\r?\n)|(/\*.*?(\*/))",re.DOTALL)
+        self.__rules[self.INT]=re.compile("\d+")
+        self.__rules[self.KEYWORD]=re.compile(key_regex)
+        self.__rules[self.IDENTIFIER]=re.compile("[A-Za-z_]\w*")
+        self.__rules[self.STRING]=re.compile("\".*?\"")
+        self.__rules[self.SYMBOL]=re.compile("[{}\(\)\[\]\.,;\+\-\*&\|<>=/~]") 
+        self.__rules[self.WHITESPACE]=re.compile("\s+")
 
 
         #initialize values for scanner
@@ -40,7 +42,7 @@ class JackTokenizer:
     def advance(self):
         current_type = ""
         current_token = ""
-        while self.__start < len(self.__file) and (current_type == "" or current_type == "whitespace" or current_type == "comment"):
+        while self.__start < len(self.__file) and (current_type == "" or current_type == self.WHITESPACE or current_type == self.COMMENT):
             match = self.__scan_token()
             if not match:
                 raise Exception("No valid token found\n"+self.__file[self.__start:])
@@ -51,7 +53,7 @@ class JackTokenizer:
         self.__type = current_type
         self.__token = current_token
 
-        return self.__start < len(self.__file) and (current_type != 'whitespace' and current_type != 'comment')
+        return self.__start < len(self.__file) and (current_type != self.WHITESPACE and current_type != self.COMMENT)
 
 
 
@@ -65,7 +67,7 @@ class JackTokenizer:
                
                 self.__start = match.end() #reset start point for matching
                 match_string = match.group(0)
-                if rule == "keyword":
+                if rule == self.KEYWORD:
                      #Keywords will consume an extra non alphanumeric/underscore character
                     #Remove this extra character and handle the matches appropriately
                     self.__start -= 1
