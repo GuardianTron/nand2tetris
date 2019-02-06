@@ -172,6 +172,9 @@ class CompilationEngine:
     def compileIf(self):
 
         self.__consume(JackTokenizer.KEYWORD,'if')
+        self.__consume(JackTokenizer.SYMBOL,'(')
+        self.compileExpression()
+        self.__consume(JackTokenizer.SYMBOL,)
         self.__consume(JackTokenizer.SYMBOL,'{')
         self.compileStatements()
         self.__consume(JackTokenizer.SYMBOL,"}")
@@ -308,7 +311,7 @@ class CompilationEngine:
                 token = {token}
             if self.__tokenizer.token() not in token:
                 
-                raise CompilationError("Expectaing {0} of type {1}. Received {2}: {3}".format(token,t_type, self.__tokenizer.type,self.__tokenizer.token()))
+                raise CompilationError("Expecting {0} of type {1}. Received {2}: {3}".format(token,t_type, self.__tokenizer.type,self.__tokenizer.token()))
 
 
         #generate xml for token
