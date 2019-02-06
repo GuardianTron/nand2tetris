@@ -2,10 +2,10 @@ from JackTokenizer import JackTokenizer,JackTokenizerRewind
 from xml.etree.ElementTree import Element,SubElement
 class CompilationEngine:
 
-    unary_op = set('-','~') #mathematical and logical negation
-    sub_call_op = set('.','(') #used to determine
-    key_const = set('true','false','null','this')
-    ops = set('+','-','*','/','&','|','<','>')
+    unary_op = {'-','~'} #mathematical and logical negation
+    sub_call_op = {'.','('} #used to determine
+    key_const = {'true','false','null','this'}
+    ops = {'+','-','*','/','&','|','<','>'}
 
 
     def xml_decorator(node_name):
@@ -157,7 +157,7 @@ class CompilationEngine:
     
     @xml_decorator("letStatement")
     def compileLet(self):
-        """compiles let statements.""""
+        """compiles let statements."""
 
         self.__consume(JackTokenizer.KEYWORD,'let')
         self.compileVariable()
@@ -201,7 +201,7 @@ class CompilationEngine:
     def compileExpressionList(self):
         """Compiles a list of expressions."""
         #utilizes the fact that all expression lists are currently contained within parenthesis to test
-        if not (self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ')':
+        if not (self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ')'):
             self.compileExpression()
             while self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ',':
                 self.__consume(JackTokenizer.SYMBOL,',')
@@ -316,7 +316,7 @@ class CompilationEngine:
 
         #varable type can be a keyword constant or class name
         if t_type == JackTokenizer.KEYWORD:
-            self.__consume(JackTokenizer.KEYWORD,set('int','char','boolean'))
+            self.__consume(JackTokenizer.KEYWORD,{'int','char','boolean'})
         else:
             self.__consume(JackTokenizer.IDENTIFIER)
 
@@ -326,7 +326,7 @@ class CompilationEngine:
 class CompilationError(Exception):
     pass    
 
-class NoValidJackFileError(Exception):
+class NotValidJackFileError(Exception):
     pass
 
 import os
@@ -335,17 +335,19 @@ def get_jack_files(filename):
         Returns a generator with the jack file is the path is a jack file.
         Throws NoValidJackFile if no jack files found.
     """
-    if os.path.isfile(filename:
+    if os.path.isfile(filename):
         if comp_extension(filename,"jack"):
             yield filename
         else:
-            raise NoValidJackFileError(filename)
+            raise NotValidJackFileError(filename)
     elif os.path.isdir(filename):
         #loop through files and return jack files
         constains_jack_file = False #flags if no jack files found
         dirs = os.listdir(filename)
         for file in dirs:
+            file = os.path.join(filename,file)
             if os.path.isfile(file) and comp_extension(file,"jack"):
+                constains_jack_file = True
                 yield file
 
         if not constains_jack_file:
@@ -354,7 +356,7 @@ def get_jack_files(filename):
         raise NotValidJackFileError(filename)
 
 def comp_extension(filename,extension):
-    return os.path.basename(filename) == extension
+    return os.path.basename(filename).split(".")[-1] == extension
 
 def create_xml_path(filename):
     directory = os.path.dirname(filename)
@@ -370,10 +372,9 @@ if __name__ == "__main__":
             compiler = CompilationEngine(file)
             xml = compiler.getXML()
             with open(create_xml_path(file),'w') as doc:
-                doc.write(ET.tostring(xml,'unicode'))
-            
+                doc.write(ET.tostring(xml,'unicode'))     
 
-    catch IOError as e:
+    except IOError as e:
         print(e)
-    catch NotValidJackFileError as e:
+    except NotValidJackFileError as e:
         print(e)
