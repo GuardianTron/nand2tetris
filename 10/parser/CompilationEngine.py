@@ -325,4 +325,55 @@ class CompilationEngine:
 
 class CompilationError(Exception):
     pass    
-    
+
+class NoValidJackFileError(Exception):
+    pass
+
+import os
+def get_jack_files(filename):
+    """ Returns a generator that enumerate all jack files in a directory.
+        Returns a generator with the jack file is the path is a jack file.
+        Throws NoValidJackFile if no jack files found.
+    """
+    if os.path.isfile(filename:
+        if comp_extension(filename,"jack"):
+            yield filename
+        else:
+            raise NoValidJackFileError(filename)
+    elif os.path.isdir(filename):
+        #loop through files and return jack files
+        constains_jack_file = False #flags if no jack files found
+        dirs = os.listdir(filename)
+        for file in dirs:
+            if os.path.isfile(file) and comp_extension(file,"jack"):
+                yield file
+
+        if not constains_jack_file:
+            raise NotValidJackFileError(filename)
+    else:
+        raise NotValidJackFileError(filename)
+
+def comp_extension(filename,extension):
+    return os.path.basename(filename) == extension
+
+def create_xml_path(filename):
+    directory = os.path.dirname(filename)
+    file = os.path.basename(filename).split(".")[0]
+    xml_file = file+".xml"
+    return os.path.join(directory,xml_file)
+
+if __name__ == "__main__":
+    from sys import argv
+    from xml.etree import ElementTree as ET
+    try:
+        for file in get_jack_files(argv[1]):
+            compiler = CompilationEngine(file)
+            xml = compiler.getXML()
+            with open(create_xml_path(file),'w') as doc:
+                doc.write(ET.tostring(xml,'unicode'))
+            
+
+    catch IOError as e:
+        print(e)
+    catch NotValidJackFileError as e:
+        print(e)
