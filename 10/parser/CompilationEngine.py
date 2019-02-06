@@ -42,7 +42,7 @@ class CompilationEngine:
         self.__root = Element('class')
         self.__current_parent = self.__root
         self.__consume(JackTokenizer.KEYWORD,'class')
-        self.__consume(JackTokenizer.IDENTIFIER,self.__tokenizer.identifier())
+        self.__consume(JackTokenizer.IDENTIFIER)
         self.__consume(JackTokenizer.SYMBOL,'{')
 
         #process class var declarations
@@ -78,13 +78,16 @@ class CompilationEngine:
     @xml_decorator("subroutineDec")
     def compileSubroutineDec(self):
 
-        self.__consume(JackTokenizer.KEYWORD,('constructor','method','function'))
+        self.__consume(JackTokenizer.KEYWORD,{'constructor','method','function'})
 
         #handle return type
         if self.__tokenizer.type == JackTokenizer.KEYWORD:
             self.__consume(JackTokenizer.KEYWORD,'void')
         else:
             self.__consume(JackTokenizer.IDENTIFIER)
+
+        #handle function name
+        self.__consume(JackTokenizer.IDENTIFIER)
 
         #handle expressions
         self.__consume(JackTokenizer.SYMBOL,'(')
@@ -275,6 +278,7 @@ class CompilationEngine:
     def compileVariable(self):
         """Compile a variable and array declaration."""
         self.__consume(JackTokenizer.IDENTIFIER)
+        t_type = self.__tokenizer.type
         if t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == '[': #arrays
             self.__consume(JackTokenizer.SYMBOL,'[')
             self.compileExpression()
@@ -292,17 +296,19 @@ class CompilationEngine:
     #token paramenter. 
     #token can either be a single token or an array of possible values
     def __consume(self,t_type,token=None):
+        print("{} {}".format(t_type,self.__tokenizer.type))
         #test type
         if self.__tokenizer.type != t_type:
-            raise CompilationError("Expecting type: %s"%(t_type))
+            raise CompilationError("Expecting type: %s  Received type: %s"%(t_type,self.__tokenizer.type))
         
         #if specific token(s) 
         if token:
             #if not a list or set, then wrap in set for comparison
             if not isinstance(token,(list,set)):
-                token = set(token)
+                token = {token}
             if self.__tokenizer.token() not in token:
-                raise CompilationError("Expectaing {0} of type {1}".format(token,t_type))
+                
+                raise CompilationError("Expectaing {0} of type {1}. Received {2}: {3}".format(token,t_type, self.__tokenizer.type,self.__tokenizer.token()))
 
 
         #generate xml for token
@@ -361,7 +367,7 @@ def comp_extension(filename,extension):
 def create_xml_path(filename):
     directory = os.path.dirname(filename)
     file = os.path.basename(filename).split(".")[0]
-    xml_file = file+".xml"
+    xml_file = file+"_output.xml"
     return os.path.join(directory,xml_file)
 
 if __name__ == "__main__":
