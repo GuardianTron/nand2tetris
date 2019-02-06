@@ -25,6 +25,7 @@ class CompilationEngine:
         return decorator
 
     def __init__(self,file):
+        self.__file = file
         self.__tokenizer = JackTokenizerRewind(file)
         #holds XML root
         self.__root = None
@@ -82,7 +83,7 @@ class CompilationEngine:
 
         #handle return type
         if self.__tokenizer.type == JackTokenizer.KEYWORD:
-            self.__consume(JackTokenizer.KEYWORD,'void')
+            self.__consume(JackTokenizer.KEYWORD,{'void','int','boolean','char'})
         else:
             self.__consume(JackTokenizer.IDENTIFIER)
 
@@ -101,12 +102,23 @@ class CompilationEngine:
     def compileParameterList(self):
 
         #consume parameter list if any
-        if self.__tokenizer.type == JackTokenizer.IDENTIFIER:
-            self.__consume(JackTokenizer.IDENTIFIER)
+        if self.__compileParameter() :
             #consume additional parameters
             while self.__tokenizer.token() == ",":
                 self.__consume(JackTokenizer.SYMBOL,',')
-                self.__consume(JackTokenizer.IDENTIFIER)
+                self.__compileParameter()
+    def __compileParameter(self):
+        #if is a parameter, consume the type declaration and the variable name
+        param_keywords = {'int','boolean','char'}
+        if self.__tokenizer.type == JackTokenizer.IDENTIFIER:
+            self.__consume(JackTokenizer.IDENTIFIER)
+            
+        elif self.__tokenizer.type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in param_keywords:
+            self.__consume(JackTokenizer.KEYWORD,param_keywords)
+        else:  
+            return False
+        self.__consume(JackTokenizer.IDENTIFIER)
+        return True
 
     @xml_decorator("subroutineBody")
     def compileSubroutineBody(self):
@@ -302,7 +314,7 @@ class CompilationEngine:
         print("{} {} {}".format(t_type,self.__tokenizer.type,self.__tokenizer.token()))
         #test type
         if self.__tokenizer.type != t_type:
-            raise CompilationError("Expecting type: %s  Received type: %s"%(t_type,self.__tokenizer.type))
+            raise CompilationError("%s  -- Expecting type: %s  Received type: %s"%(self.__file,t_type,self.__tokenizer.type))
         
         #if specific token(s) 
         if token:
@@ -311,7 +323,7 @@ class CompilationEngine:
                 token = {token}
             if self.__tokenizer.token() not in token:
                 
-                raise CompilationError("Expecting {0} of type {1}. Received {2}: {3}".format(token,t_type, self.__tokenizer.type,self.__tokenizer.token()))
+                raise CompilationError("{} -- Expecting {} of type {}. Received {}: {}".format(self.__file,token,t_type, self.__tokenizer.type,self.__tokenizer.token()))
 
 
         #generate xml for token
