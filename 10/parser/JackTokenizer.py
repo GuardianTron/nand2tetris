@@ -4,7 +4,7 @@ class JackTokenizer:
 
     KEYWORD = "keyword"
     INT = "integerConstant"
-    IDENTIFIER = "indentifier"
+    IDENTIFIER = "identifier"
     STRING = "stringConstant"
     SYMBOL = "symbol"
     WHITESPACE = "whitespace"
