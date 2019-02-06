@@ -154,7 +154,7 @@ class CompilationEngine:
 
     @xml_decorator("doStatement")
     def compileDo(self):
-        self.__consume(JackTokenizer.SYMBOL,"do")
+        self.__consume(JackTokenizer.KEYWORD,"do")
         self.compileSubroutineCall()
         self.__consume(JackTokenizer.SYMBOL,";")
     
@@ -196,7 +196,7 @@ class CompilationEngine:
         self.__consume(JackTokenizer.SYMBOL,'(')
         self.compileExpression()
         self.__consume(JackTokenizer.SYMBOL,')')
-        self.__consume(JackTokenizer.STRING,'{')
+        self.__consume(JackTokenizer.SYMBOL,'{')
         self.compileStatements()
         self.__consume(JackTokenizer.SYMBOL,'}')
 
