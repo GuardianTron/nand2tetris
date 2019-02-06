@@ -148,7 +148,7 @@ class JackTokenizerRewind(JackTokenizer):
         if self.__index > 0:
             self.__index -= 1
             #set current token
-            self.type, self.raw_token = self.__token[self.__index]
+            self.type, self.raw_token = self.__tokens[self.__index]
             return True
         return False
                 
