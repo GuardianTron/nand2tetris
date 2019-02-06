@@ -213,7 +213,7 @@ class CompilationEngine:
     @xml_decorator("expression")
     def compileExpression(self):
         self.compileTerm()
-        while self.__tokenizer.token in self.ops:
+        while self.__tokenizer.token() in self.ops:
             self.__consume(JackTokenizer.SYMBOL,self.ops)
             self.compileTerm()
 
@@ -273,7 +273,7 @@ class CompilationEngine:
         #handle The code was developed against Pi 3 B, I have not tested on Pi 1. I think references to the name BCM2835 may be accidental, perhaps more accurate would be to call it BCM2837, although also possible that they sharethe actual function call portion -- Always runs
         self.__consume(JackTokenizer.SYMBOL,'(')
         self.compileExpressionList()
-        self.__consume(')')
+        self.__consume(JackTokenizer.SYMBOL,')')
 
     def compileVariable(self):
         """Compile a variable and array declaration."""
@@ -296,7 +296,7 @@ class CompilationEngine:
     #token paramenter. 
     #token can either be a single token or an array of possible values
     def __consume(self,t_type,token=None):
-        print("{} {}".format(t_type,self.__tokenizer.type))
+        print("{} {} {}".format(t_type,self.__tokenizer.type,self.__tokenizer.token()))
         #test type
         if self.__tokenizer.type != t_type:
             raise CompilationError("Expecting type: %s  Received type: %s"%(t_type,self.__tokenizer.type))
