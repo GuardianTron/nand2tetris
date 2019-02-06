@@ -313,7 +313,7 @@ class CompilationEngine:
 
         #generate xml for token
         token_xml = SubElement(self.__current_parent,self.__tokenizer.type)
-        token_xml.text = self.__tokenizer.token()
+        token_xml.text = str(self.__tokenizer.token())
         self.__tokenizer.advance()
 
     #helper method for consuming type declarations
