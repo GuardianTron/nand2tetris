@@ -5,7 +5,7 @@ class CompilationEngine:
     unary_op = {'-','~'} #mathematical and logical negation
     sub_call_op = {'.','('} #used to determine
     key_const = {'true','false','null','this'}
-    ops = {'+','-','*','/','&','|','<','>'}
+    ops = {'+','-','*','/','&','|','<','>','='}
 
 
     def xml_decorator(node_name):
@@ -107,6 +107,7 @@ class CompilationEngine:
             while self.__tokenizer.token() == ",":
                 self.__consume(JackTokenizer.SYMBOL,',')
                 self.__compileParameter()
+
     def __compileParameter(self):
         #if is a parameter, consume the type declaration and the variable name
         param_keywords = {'int','boolean','char'}
@@ -186,7 +187,7 @@ class CompilationEngine:
         self.__consume(JackTokenizer.KEYWORD,'if')
         self.__consume(JackTokenizer.SYMBOL,'(')
         self.compileExpression()
-        self.__consume(JackTokenizer.SYMBOL,)
+        self.__consume(JackTokenizer.SYMBOL,')')
         self.__consume(JackTokenizer.SYMBOL,'{')
         self.compileStatements()
         self.__consume(JackTokenizer.SYMBOL,"}")
