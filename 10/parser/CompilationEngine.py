@@ -312,7 +312,6 @@ class CompilationEngine:
     #token paramenter. 
     #token can either be a single token or an array of possible values
     def __consume(self,t_type,token=None):
-        print("{} {} {}".format(t_type,self.__tokenizer.type,self.__tokenizer.token()))
         #test type
         if self.__tokenizer.type != t_type:
             raise CompilationError("%s  -- Expecting type: %s  Received type: %s"%(self.__file,t_type,self.__tokenizer.type))
