@@ -161,12 +161,23 @@ class CompilationEngine:
     def compileVarDec(self):
 
         self.__consume(JackTokenizer.KEYWORD,'var')
-        self.__consumeTypeDec()
-        self.__consume(JackTokenizer.IDENTIFIER)
+        type = self.__consumeTypeDec()
+        name = self.__consume(JackTokenizer.IDENTIFIER)
+
+        self.__symbol_table.define(name,type,SymbolTable.VAR)
+        info = self.__symbol_table.varInfo(name)
+        self.__last_node.set('type',info.type)
+        self.__last_node.set('kind',info.kind)
+        self.__last_node.set('index',str(info.index))
         #handle multiple variables
         while self.__tokenizer.token() == ',':
             self.__consume(JackTokenizer.SYMBOL,',')
-            self.__consume(JackTokenizer.IDENTIFIER)
+            name = self.__consume(JackTokenizer.IDENTIFIER)
+            self.__symbol_table.define(name,type,SymbolTable.VAR)
+            info = self.__symbol_table.varInfo(name)
+            self.__last_node.set('type',info.type)
+            self.__last_node.set('kind',info.kind)
+            self.__last_node.set('index',str(info.index))
 
         #finish declaration
         self.__consume(JackTokenizer.SYMBOL,';')
