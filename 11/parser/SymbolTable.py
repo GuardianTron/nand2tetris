@@ -15,10 +15,10 @@ class SymbolTable:
     static_count = 0  
 
     # kind consants
-    STATIC = "STATIC"
-    FIELD = "FIELD"
-    ARG = "ARG"
-    VAR = "VAR"
+    STATIC = "static"
+    FIELD = "field"
+    ARG = "arg"
+    VAR = "var"
 
 
 
@@ -27,6 +27,7 @@ class SymbolTable:
 
     def __init__(self):
         self._class_table = {}
+        self._func_table = {}
 
         self._var_counts = {self.FIELD: 0,self.ARG: 0,self.VAR:0}
 
@@ -48,7 +49,7 @@ class SymbolTable:
             self._class_table[name] = self.Info(type,kind,self.static_count)
             self.static_count +=1
         elif kind == self.FIELD:
-            self._class_table = self.Info(type,kind,self._var_counts[self.FIELD])
+            self._class_table[name] = self.Info(type,kind,self._var_counts[self.FIELD])
             self._var_counts[self.FIELD] +=1
         else: #assume it's a parameter or local variable
             self._func_table[name] = self.Info(type,kind,self._var_counts[kind])

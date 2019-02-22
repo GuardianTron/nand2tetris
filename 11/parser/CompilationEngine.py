@@ -8,7 +8,6 @@ class CompilationEngine:
     key_const = {'true','false','null','this'}
     ops = {'+','-','*','/','&','|','<','>','='}
 
-    @staticmethod
     def xml_decorator(node_name):
         """ Adds xml generation code to called compilation objects.
             Manages the node tree for the function, creating a new
@@ -78,11 +77,15 @@ class CompilationEngine:
         info = self.__symbol_table.varInfo(name)
         self.__last_node.set("type", info.type)
         self.__last_node.set("kind", info.kind)
-        self.__last_node.set("index", info.index)
+        self.__last_node.set("index", str(info.index))
         while self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ',':
             self.__consume(JackTokenizer.SYMBOL,',')
             name = self.__consume(JackTokenizer.IDENTIFIER)
             self.__symbol_table.define(name,type,kind)
+            info = self.__symbol_table.varInfo(name)
+            self.__last_node.set("type", info.type)
+            self.__last_node.set("kind", info.kind)
+            self.__last_node.set("index", str(info.index))
 
         #consume ending ';'
         self.__consume(JackTokenizer.SYMBOL,';')
