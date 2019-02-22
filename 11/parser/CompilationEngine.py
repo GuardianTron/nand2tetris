@@ -1,4 +1,5 @@
 from JackTokenizer import JackTokenizer,JackTokenizerRewind
+from SymbolTable import SymbolTable
 from xml.etree.ElementTree import Element,SubElement
 class CompilationEngine:
 
@@ -27,6 +28,7 @@ class CompilationEngine:
     def __init__(self,file):
         self.__file = file
         self.__tokenizer = JackTokenizerRewind(file)
+        self.__symbol_table = SymbolTable()
         #holds XML root
         self.__root = None
         #holds the current parent node
@@ -328,8 +330,11 @@ class CompilationEngine:
 
         #generate xml for token
         token_xml = SubElement(self.__current_parent,self.__tokenizer.type)
-        token_xml.text = " {} ".format(str(self.__tokenizer.token()))
+        token_string = str(self.__tokenizer.token())
+        token_xml.text = " {} ".format(token_string)
+
         self.__tokenizer.advance()
+        return token_string
 
     #helper method for consuming type declarations
     def __consumeTypeDec(self):
@@ -337,9 +342,9 @@ class CompilationEngine:
 
         #varable type can be a keyword constant or class name
         if t_type == JackTokenizer.KEYWORD:
-            self.__consume(JackTokenizer.KEYWORD,{'int','char','boolean'})
+            return self.__consume(JackTokenizer.KEYWORD,{'int','char','boolean'})
         else:
-            self.__consume(JackTokenizer.IDENTIFIER)
+            return self.__consume(JackTokenizer.IDENTIFIER)
 
 
 
