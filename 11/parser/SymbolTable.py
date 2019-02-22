@@ -87,7 +87,7 @@ class SymbolTable:
 
     def typeOf(self,name):
         """Returns the datatype of the variable"""
-        info = self.varInfo(name):
+        info = self.varInfo(name)
         if info:
             return info.type
         return None

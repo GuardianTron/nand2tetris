@@ -8,7 +8,7 @@ class CompilationEngine:
     key_const = {'true','false','null','this'}
     ops = {'+','-','*','/','&','|','<','>','='}
 
-
+    @staticmethod
     def xml_decorator(node_name):
         """ Adds xml generation code to called compilation objects.
             Manages the node tree for the function, creating a new
@@ -33,6 +33,10 @@ class CompilationEngine:
         self.__root = None
         #holds the current parent node
         self.__current_parent = None
+        
+        #holds the last xml node processed
+        self.__last_node = None
+
 
         #bootstrap the compilation process
         if self.__tokenizer.advance():
@@ -62,17 +66,23 @@ class CompilationEngine:
     @xml_decorator("classVarDec")
     def compileClassVarDec(self):
 
-        self.__consume(JackTokenizer.KEYWORD,self.__tokenizer.keyword()) #static or field
+        kind = self.__consume(JackTokenizer.KEYWORD,self.__tokenizer.keyword()) #static or field
 
 
-        self.__consumeTypeDec()
+        type = self.__consumeTypeDec()
 
         #consume the variable list
         #make sure their is at least one identifier
-        self.__consume(JackTokenizer.IDENTIFIER)
+        name = self.__consume(JackTokenizer.IDENTIFIER)
+        self.__symbol_table.define(name,type,kind)
+        info = self.__symbol_table.varInfo(name)
+        self.__last_node.set("type", info.type)
+        self.__last_node.set("kind", info.kind)
+        self.__last_node.set("index", info.index)
         while self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ',':
             self.__consume(JackTokenizer.SYMBOL,',')
-            self.__consume(JackTokenizer.IDENTIFIER)
+            name = self.__consume(JackTokenizer.IDENTIFIER)
+            self.__symbol_table.define(name,type,kind)
 
         #consume ending ';'
         self.__consume(JackTokenizer.SYMBOL,';')
@@ -332,6 +342,7 @@ class CompilationEngine:
         token_xml = SubElement(self.__current_parent,self.__tokenizer.type)
         token_string = str(self.__tokenizer.token())
         token_xml.text = " {} ".format(token_string)
+        self.__last_node = token_xml
 
         self.__tokenizer.advance()
         return token_string
