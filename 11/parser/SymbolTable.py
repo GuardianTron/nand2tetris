@@ -75,6 +75,33 @@ class SymbolTable:
         else:
             return None
 
+    #the following methods are added for compatibility with the suggested interface
+    def kindOf(self,name):
+        """ Returns the scope of the named variable."""
+        info = self.varInfo(name)
+
+        if info:
+            return info.kind
+
+        return None
+
+    def typeOf(self,name):
+        """Returns the datatype of the variable"""
+        info = self.varInfo(name):
+        if info:
+            return info.type
+        return None
+
+    def indexOf(self,name):
+        """Returns the index of the variable"""
+
+        info = self.varInfo(name)
+
+        if info:
+            return info.index
+        return None
+
+
 
     
 
