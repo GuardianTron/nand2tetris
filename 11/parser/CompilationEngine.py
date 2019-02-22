@@ -93,6 +93,7 @@ class CompilationEngine:
 
     @xml_decorator("subroutineDec")
     def compileSubroutineDec(self):
+        self.__symbol_table.startSubroutine()
 
         self.__consume(JackTokenizer.KEYWORD,{'constructor','method','function'})
 
@@ -127,13 +128,19 @@ class CompilationEngine:
         #if is a parameter, consume the type declaration and the variable name
         param_keywords = {'int','boolean','char'}
         if self.__tokenizer.type == JackTokenizer.IDENTIFIER:
-            self.__consume(JackTokenizer.IDENTIFIER)
+            type = self.__consume(JackTokenizer.IDENTIFIER)
             
         elif self.__tokenizer.type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in param_keywords:
-            self.__consume(JackTokenizer.KEYWORD,param_keywords)
+            type = self.__consume(JackTokenizer.KEYWORD,param_keywords)
         else:  
             return False
-        self.__consume(JackTokenizer.IDENTIFIER)
+        name = self.__consume(JackTokenizer.IDENTIFIER)
+
+        self.__symbol_table.define(name,type,SymbolTable.ARG)
+        info = self.__symbol_table.varInfo(name)
+        self.__last_node.set('type',info.type)
+        self.__last_node.set('kind',info.kind)
+        self.__last_node.set('index',str(info.index))
         return True
 
     @xml_decorator("subroutineBody")
