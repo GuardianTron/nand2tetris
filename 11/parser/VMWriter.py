@@ -6,6 +6,7 @@ class VMWriter:
 
     def __init__(self,filename):
         self._instructions = []
+        self._vm_filename = filename.split('.')[0]+".vm"
 
     def writePush(self,segment,index):
         self._writePushPop("push",segment,index)
@@ -49,6 +50,12 @@ class VMWriter:
 
     def writeReturn(self):
         self._instructions.append("return")
+
+    def close(self):
+        with open(self._vm_filename,'w') as f:
+            for instruction in self._instructions:
+                f.write(instruction+"\n")
+            
 
 
     
