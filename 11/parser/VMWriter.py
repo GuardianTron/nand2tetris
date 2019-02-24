@@ -1,6 +1,7 @@
 class VMWriter:
 
     seg_types = set("CONST","ARG","STATIC","LOCAL","THIS","THAT","POINTER","TEMP")
+    arithmetic_commands = set("ADD","SUB","NEG","EQ","GT","LT","AND","OR","NOT")
 
 
     def __init__(self,filename):
@@ -24,6 +25,30 @@ class VMWriter:
         self._instructions.append("%s %s %d"%(pushOrPop.lower(),segment.lower(),index))
 
         
+    def writeArithmetic(self,command):
+        if command.upper() not in self.arithmetic_commands:
+            raise InstructionError("%s is an invalid arithmetic instructions"%(command))
+
+        self._instructions.append(command.lower())
+
+    def writeLabel(self,label):
+        self._instructions.append("label %s"%(label))
+
+
+    def writeGoto(self,label):
+        self._instructions.append("goto %s"%(label))
+
+    def writeIf(self,label):
+        self._instructions.append("if-goto %s"%(label))
+
+    def writeCall(self,name,numArgs):
+        self.__instructions.append("call %s %d"(name,numArgs))
+
+    def writeFunction(self,name,numLocals):
+        self.__instructions.append("function %s %d"%(name,numLocals))    
+
+    def writeReturn(self):
+        self._instructions.append("return")
 
 
     
