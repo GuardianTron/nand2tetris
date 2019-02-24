@@ -1,7 +1,7 @@
 class VMWriter:
 
-    seg_types = set("CONST","ARG","STATIC","LOCAL","THIS","THAT","POINTER","TEMP")
-    arithmetic_commands = set("ADD","SUB","NEG","EQ","GT","LT","AND","OR","NOT")
+    seg_types = {"CONST","ARG","STATIC","LOCAL","THIS","THAT","POINTER","TEMP"}
+    arithmetic_commands = {"ADD","SUB","NEG","EQ","GT","LT","AND","OR","NOT"}
 
 
     def __init__(self,filename):
@@ -14,9 +14,9 @@ class VMWriter:
     def writePop(self,segment,index):
         self._writePushPop("pop",segment,index)
 
-    def _writePushPop(self,pushOrPop,segment,index)
+    def _writePushPop(self,pushOrPop,segment,index):
 
-        if pushOrPop.lower not in set("push","pop"):
+        if pushOrPop.lower() not in {"push","pop"}:
             raise InstructionError("Instruction %s is not a valid instructions"%(pushOrPop))
 
         if segment.upper() not in self.seg_types:
@@ -43,10 +43,10 @@ class VMWriter:
         self._instructions.append("if-goto %s"%(label))
 
     def writeCall(self,name,numArgs):
-        self.__instructions.append("call %s %d"(name,numArgs))
+        self._instructions.append("call %s %d"%(name,numArgs))
 
     def writeFunction(self,name,numLocals):
-        self.__instructions.append("function %s %d"%(name,numLocals))    
+        self._instructions.append("function %s %d"%(name,numLocals))    
 
     def writeReturn(self):
         self._instructions.append("return")
