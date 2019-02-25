@@ -18,7 +18,7 @@ class SymbolTable:
     STATIC = "static"
     FIELD = "field"
     ARG = "arg"
-    VAR = "var"
+    VAR = "local"
 
 
 
