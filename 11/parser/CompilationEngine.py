@@ -315,6 +315,10 @@ class CompilationEngine:
             if token == 'this' and  next_token == '.': #method call
                 self.compileSubroutineCall()
             else: #single keyword
+                if token == "true":
+                    self.__vm.writePush("constant",-1)
+                else:
+                    self.__vm.writePush("constant",0)
                 self.__consume(JackTokenizer.KEYWORD,self.key_const)
 
         elif t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == '(':   #assume parenthesis by itself starts an expression
