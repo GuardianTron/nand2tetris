@@ -317,6 +317,8 @@ class CompilationEngine:
             else: #single keyword
                 if token == "true":
                     self.__vm.writePush("constant",-1)
+                elif token == "this": #acting as this assignment
+                    self.__vm.writePush("pointer",0)
                 else:
                     self.__vm.writePush("constant",0)
                 self.__consume(JackTokenizer.KEYWORD,self.key_const)
