@@ -317,13 +317,15 @@ class CompilationEngine:
             #restore keyword token for later consumption
             self.__tokenizer.rewind()
             
-            if token == 'this' and  next_token == '.': #method call
-                self.compileSubroutineCall()
+            if token == 'this':
+                self.__vm.writePush('pointer',0)
+                if next_token == '.': #method call
+                    self.compileSubroutineCall()
+                else: #subroutineCall consumes this after using it for determining context
+                    self.__consume(JackTokenizer.KEYWORD,self.key_const)
             else: #single keyword
                 if token == "true":
                     self.__vm.writePush("constant",-1)
-                elif token == "this": #acting as this assignment
-                    self.__vm.writePush("pointer",0)
                 else:
                     self.__vm.writePush("constant",0)
                 self.__consume(JackTokenizer.KEYWORD,self.key_const)
@@ -360,7 +362,6 @@ class CompilationEngine:
         t_type = self.__tokenizer.type
         if t_type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() == 'this': #handle this identifier
             self.__consume(JackTokenizer.KEYWORD,'this')
-            self.__vm.writePush("pointer",0)
             caller = self.__class_name
         else: #assume an identifier
             #see if method is being invoked on a class or 
@@ -372,7 +373,6 @@ class CompilationEngine:
                info = self.__symbol_table.varInfo(caller)
                #set caller to be the class
                caller = info.type
-               self.__vm.writePush(info.kind,info.index)
 
             except KeyError:
                 is_method = False
