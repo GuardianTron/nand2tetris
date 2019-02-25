@@ -17,7 +17,7 @@ class SymbolTable:
     # kind consants
     STATIC = "static"
     FIELD = "field"
-    ARG = "arg"
+    ARG = "argument"
     VAR = "local"
 
 
