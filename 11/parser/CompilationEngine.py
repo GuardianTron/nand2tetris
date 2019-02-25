@@ -339,6 +339,7 @@ class CompilationEngine:
             self.compileTerm()
         elif t_type == JackTokenizer.IDENTIFIER: #can be a variable, array, or function call
             #####NOTE: Does not handle function calls on arrays!!!!!!#########
+            #####NOTE: 2 Arrays are nontyped - no way for language to do this ########
             #handle pushing values/pointers onto the stack
             name = self.__tokenizer.identifier()
             info = self.__symbol_table.varInfo(name)
@@ -354,8 +355,19 @@ class CompilationEngine:
                 if token in self.sub_call_op: #handle method and function calls
                     self.compileSubroutineCall()
                 elif token == "[":
+                    if info.type != "Array":
+                        raise CompilationError("Attempted array access on non array variable {}".format(name))
                     #handle array access here
-                    print("I needs tohandles the arrays!!!!!")
+                    self.__consume(JackTokenizer.IDENTIFIER)
+                    self.__consume("[")
+                    self.compileExpression()
+                    self.__consume("]")
+                    self.__vm.writeArithmetic('add')
+                    self.__vm.writePop("pointer",0)
+                    self.__vm.writePush("that",0)
+            else:
+                #just a variable, consume
+                self.__consume(JackTokenizer.IDENTIFIER)
             
     def compileSubroutineCall(self):
         """
