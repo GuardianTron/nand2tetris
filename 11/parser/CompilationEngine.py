@@ -53,6 +53,10 @@ class CompilationEngine:
         self.__last_node = None
 
 
+        #the name of the current class
+        self.__class_name = ""
+
+
         #bootstrap the compilation process
         if self.__tokenizer.advance():
             self.compileClass()
@@ -64,6 +68,7 @@ class CompilationEngine:
         self.__root = Element('class')
         self.__current_parent = self.__root
         self.__consume(JackTokenizer.KEYWORD,'class')
+        self.__class_name = self.__tokenizer.token()
         self.__consume(JackTokenizer.IDENTIFIER)
         self.__consume(JackTokenizer.SYMBOL,'{')
 
@@ -339,11 +344,12 @@ class CompilationEngine:
                self.compileSubroutineCall()
             else: #if not a method call, assume variable or array
                 info = self.__symbol_table.varInfo(token)
-                if info.type == "Array":
-                    #handle as array
-                else: 
-                    #handle as variable
+                if info.kind == SymbolTable.FIELD:
+                    self.__vm.writePush("this",info.index)
+                else:
                     self.__vm.writePush(info.kind,info.index)
+                self.__consume(JackTokenizer.IDENTIFIER)
+                #handle case of array manipulation
 
     def compileSubroutineCall(self):
         """
@@ -355,7 +361,7 @@ class CompilationEngine:
         if t_type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() == 'this': #handle this identifier
             self.__consume(JackTokenizer.KEYWORD,'this')
             self.__vm.writePush("pointer",0)
-            caller = "this"
+            caller = self.__class_name
         else: #assume an identifier
             #see if method is being invoked on a class or 
             #object instance.
@@ -364,7 +370,9 @@ class CompilationEngine:
             caller = self.__tokenizer.identifier()
             try:
                info = self.__symbol_table.varInfo(caller)
-               self.__vm.writePush(info.segment,info.index)
+               #set caller to be the class
+               caller = info.type
+               self.__vm.writePush(info.kind,info.index)
 
             except KeyError:
                 is_method = False
