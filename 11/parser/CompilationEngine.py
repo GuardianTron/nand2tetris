@@ -23,6 +23,11 @@ class CompilationEngine:
         "/":"Math.divide"
     }
 
+    unary_op_commands = {
+        "-":"neg",
+        "~":"not"
+    }
+
     def xml_decorator(node_name):
         """ Adds xml generation code to called compilation objects.
             Manages the node tree for the function, creating a new
@@ -335,8 +340,11 @@ class CompilationEngine:
             self.compileExpression()
             self.__consume(JackTokenizer.SYMBOL,')')
         elif t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() in self.unary_op: # example mathematical negation of an expression -- call term again
+            op = self.__tokenizer.symbol()
             self.__consume(JackTokenizer.SYMBOL,self.unary_op)
             self.compileTerm()
+            self.__vm.writeArithmetic(self.unary_op_commands[op])
+
         elif t_type == JackTokenizer.IDENTIFIER: #can be a variable, array, or function call
             #####NOTE: Does not handle function calls on arrays!!!!!!#########
             #####NOTE: 2 Arrays are nontyped - no way for language to do this ########
