@@ -1,12 +1,27 @@
 from JackTokenizer import JackTokenizer,JackTokenizerRewind
 from SymbolTable import SymbolTable
 from xml.etree.ElementTree import Element,SubElement
+from VMWriter import VMWriter,InstructionError
 class CompilationEngine:
 
     unary_op = {'-','~'} #mathematical and logical negation
     sub_call_op = {'.','('} #used to determine
     key_const = {'true','false','null','this'}
     ops = {'+','-','*','/','&','|','<','>','='}
+
+    binary_op_commands = {
+        "-":"sub",
+        "+":"add",
+        "<":"lt",
+        ">":"gt",
+        "&":"and",
+        "|":"or"
+    }
+
+    binary_op_functions = {
+        "*":"Math.multiply",
+        "/":"Math.divide"
+    }
 
     def xml_decorator(node_name):
         """ Adds xml generation code to called compilation objects.
@@ -28,6 +43,7 @@ class CompilationEngine:
         self.__file = file
         self.__tokenizer = JackTokenizerRewind(file)
         self.__symbol_table = SymbolTable()
+        self.__vm = VMWriter(self.__file)
         #holds XML root
         self.__root = None
         #holds the current parent node
@@ -263,14 +279,23 @@ class CompilationEngine:
     def compileExpression(self):
         self.compileTerm()
         while self.__tokenizer.token() in self.ops:
+            op = self.__tokenizer.symbol()
             self.__consume(JackTokenizer.SYMBOL,self.ops)
             self.compileTerm()
+            #handle op after term..remember call stack
+            if op in self.binary_op_commands:
+                self.__vm.writeArithmetic(self.binary_op_commands[op])
+            elif op in self.binary_op_functions:
+                self.__vm.writeCall(self.binary_op_functions[op],2)
+                
+
 
     @xml_decorator("term")
     def compileTerm(self):
         """Compiles individual terms. Terms can be recursively defined"""
         t_type = self.__tokenizer.type
         if t_type == JackTokenizer.INT:
+            self.__vm.writePush("constant",self.__tokenizer.integer())
             self.__consume(JackTokenizer.INT)
         elif t_type == JackTokenizer.STRING:
             self.__consume(JackTokenizer.STRING)
