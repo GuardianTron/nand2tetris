@@ -378,7 +378,8 @@ class CompilationEngine:
         args = self.compileExpressionList()
         self.__consume(JackTokenizer.SYMBOL,')')
         #if caller is a method, add the calling object as an argument
-        args +=1
+        if is_method:
+            args +=1
         self.__vm.writeCall(caller+"."+function,args)
          
 
