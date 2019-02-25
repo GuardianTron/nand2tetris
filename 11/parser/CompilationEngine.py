@@ -338,21 +338,24 @@ class CompilationEngine:
             self.__consume(JackTokenizer.SYMBOL,self.unary_op)
             self.compileTerm()
         elif t_type == JackTokenizer.IDENTIFIER: #can be a variable, array, or function call
-            self.__tokenizer.advance() #if a variable, rest of conditionals will fall through
+            #handle pushing values/pointers onto the stack
+            name = self.__tokenizer.identifier()
+            info = self.__symbol_table.varInfo(name)
+            self.__vm.writePush(info.kind,info.index)
+            
+            #determine if there is a method call or array access
+            self.__tokenizer.advance() 
+
             t_type = self.__tokenizer.type
             token = self.__tokenizer.token()
             self.__tokenizer.rewind() #rewind back to identifier for processing methods to consume
-            if t_type == JackTokenizer.SYMBOL and token in self.sub_call_op: #handle method and function calls
-               self.compileSubroutineCall()
-            else: #if not a method call, assume variable or array
-                info = self.__symbol_table.varInfo(token)
-                if info.kind == SymbolTable.FIELD:
-                    self.__vm.writePush("this",info.index)
-                else:
-                    self.__vm.writePush(info.kind,info.index)
-                self.__consume(JackTokenizer.IDENTIFIER)
-                #handle case of array manipulation
-
+            if t_type == JackTokenizer.SYMBOL #handle array and function calls
+                if token in self.sub_call_op: #handle method and function calls
+                    self.compileSubroutineCall()
+                elif token == "[":
+                    #handle array access here
+                    print("I needs tohandles the arrays!!!!!")
+            
     def compileSubroutineCall(self):
         """
            Handles parsing of the subroutine call
