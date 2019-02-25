@@ -338,6 +338,7 @@ class CompilationEngine:
             self.__consume(JackTokenizer.SYMBOL,self.unary_op)
             self.compileTerm()
         elif t_type == JackTokenizer.IDENTIFIER: #can be a variable, array, or function call
+            #####NOTE: Does not handle function calls on arrays!!!!!!#########
             #handle pushing values/pointers onto the stack
             name = self.__tokenizer.identifier()
             info = self.__symbol_table.varInfo(name)
