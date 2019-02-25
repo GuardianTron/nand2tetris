@@ -268,12 +268,16 @@ class CompilationEngine:
     @xml_decorator("expressionList")
     def compileExpressionList(self):
         """Compiles a list of expressions."""
+        num_args = 0
         #utilizes the fact that all expression lists are currently contained within parenthesis to test
         if not (self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ')'):
             self.compileExpression()
+            num_args = 1
             while self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ',':
                 self.__consume(JackTokenizer.SYMBOL,',')
                 self.compileExpression()
+                num_args+=1
+        return num_args
     
     @xml_decorator("expression")
     def compileExpression(self):
@@ -334,20 +338,43 @@ class CompilationEngine:
         """
            Handles parsing of the subroutine call
         """
+        is_method = True
+        caller = ""
         t_type = self.__tokenizer.type
         if t_type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() == 'this': #handle this identifier
             self.__consume(JackTokenizer.KEYWORD,'this')
+            self.__vm.writePush("pointer",0)
+            caller = "this"
         else: #assume an identifier
+            #see if method is being invoked on a class or 
+            #object instance.
+            #only object instances will exist within the symbol table
+            #assume Class method invocation otherwise
+            caller = self.__tokenizer.identifier()
+            try:
+               info = self.__symbol_table.varInfo(caller)
+               self.__vm.writePush(info.segment,info.index)
+
+            except KeyError:
+                is_method = False
+                
+
+
             self.__consume(JackTokenizer.IDENTIFIER)
 
 
         if self.__tokenizer.token() == '.': #if method call, consume . and method name identifier
             self.__consume(JackTokenizer.SYMBOL,'.')
+            function = self.__tokenizer.identifier()
             self.__consume(JackTokenizer.IDENTIFIER)
         #handle The code was developed against Pi 3 B, I have not tested on Pi 1. I think references to the name BCM2835 may be accidental, perhaps more accurate would be to call it BCM2837, although also possible that they sharethe actual function call portion -- Always runs
         self.__consume(JackTokenizer.SYMBOL,'(')
-        self.compileExpressionList()
+        args = self.compileExpressionList()
         self.__consume(JackTokenizer.SYMBOL,')')
+        #if caller is a method, add the calling object as an argument
+        args +=1
+        self.__vm.writeCall(caller+"."+function,args)
+         
 
     def compileVariable(self):
         """Compile a variable and array declaration."""
