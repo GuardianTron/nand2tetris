@@ -338,7 +338,12 @@ class CompilationEngine:
             if t_type == JackTokenizer.SYMBOL and token in self.sub_call_op: #handle method and function calls
                self.compileSubroutineCall()
             else: #if not a method call, assume variable or array
-                self.compileVariable()
+                info = self.__symbol_table.varInfo(token)
+                if info.type == "Array":
+                    #handle as array
+                else: 
+                    #handle as variable
+                    self.__vm.writePush(info.kind,info.index)
 
     def compileSubroutineCall(self):
         """
