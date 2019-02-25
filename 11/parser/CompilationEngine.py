@@ -234,6 +234,13 @@ class CompilationEngine:
     def compileLet(self):
         """compiles let statements."""
 
+        #NOTE: To handle storage to arrays
+        #First pop the top value returned by the 
+        #expression into temp 0, store array pointer
+        #in pointer 1, then push temp 0 back onto 
+        #the stack and then push the value into 
+        #that 0
+
         self.__consume(JackTokenizer.KEYWORD,'let')
         self.compileVariable()
         self.__consume(JackTokenizer.SYMBOL,"=")
