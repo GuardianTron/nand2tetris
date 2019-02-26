@@ -241,11 +241,49 @@ class CompilationEngine:
         #the stack and then push the value into 
         #that 0
 
+        #get variable name
         self.__consume(JackTokenizer.KEYWORD,'let')
-        self.compileVariable()
+        name = self.__tokenizer.identifier()
+        self.__consume(JackTokenizer.IDENTIFIER)
+
+        info = self.__vm.varInfo(name)
+        
+
+        #handle storing an element to a specific array index
+        is_array_access = False
+        if info.type == "Array" && self.__tokenizer.token() == "[":
+            #place base array pointer onto the stack
+            self.__vm.writePush(info.kind,info.index)
+            #calculate internal expression for index
+            self.__consume(JackTokenizer.SYMBOL,"[")
+            self.compileExpression()
+            self.__consume(JackTokenizer.SYMBOL,']')
+            #add to base array pointer to get element's address
+            self.__vm.writeArithmetic("add")
+
+            is_array_access = True
+
+
         self.__consume(JackTokenizer.SYMBOL,"=")
         self.compileExpression()
         self.__consume(JackTokenizer.SYMBOL,";")
+
+        #if array, store returned expression into the specified element.
+        #otherwise, just store into the variable based on it's location
+        #in memory
+
+        if is_array_access:
+            #save expression result off of stack 
+            #so that element pointer can be accessed
+            self.__vm.writePop("temp",0)
+
+            #point to array element and save result
+            self.__vm.writePop("pointer",1)
+            self.__vm.writePush("temp",0)
+            self.__vm.writePop("that",0)
+        else:
+            #simply save to location in memory specified by symbol table.
+            self.__vm.writePop(info.kind,info.index)
 
     @xml_decorator("ifStatement")
     def compileIf(self):
