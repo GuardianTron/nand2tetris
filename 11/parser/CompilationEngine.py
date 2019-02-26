@@ -357,6 +357,14 @@ class CompilationEngine:
             self.__vm.writePush("constant",self.__tokenizer.integer())
             self.__consume(JackTokenizer.INT)
         elif t_type == JackTokenizer.STRING:
+            string = self.__tokenizer.string()
+            #initialize string object
+            self.__vm.writePush("constant",len(string))
+            self.__vm.writeCall("String.new",1)
+            for char in string:
+                self.__vm.writePush("constant",ord(char))
+                self.__vm.writeCall("String.append",1)
+
             self.__consume(JackTokenizer.STRING)
         elif t_type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in self.key_const: #true,false,null,this
             #consume the keyword, but save in case it is part of a method call on 'this'
