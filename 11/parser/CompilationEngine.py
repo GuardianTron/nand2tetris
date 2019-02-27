@@ -364,6 +364,7 @@ class CompilationEngine:
             for char in string:
                 self.__vm.writePush("constant",ord(char))
                 self.__vm.writeCall("String.append",1)
+                self.__vm.writePop("temp",0)
 
             self.__consume(JackTokenizer.STRING)
         elif t_type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() in self.key_const: #true,false,null,this
