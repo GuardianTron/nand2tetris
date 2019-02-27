@@ -319,6 +319,7 @@ class CompilationEngine:
         #not an emptry return, so compile expression
         if not (self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ';'):
             self.compileExpression()
+        self.__vm.writeReturn()
         self.__consume(JackTokenizer.SYMBOL,';')
 
     @xml_decorator("whileStatement")
