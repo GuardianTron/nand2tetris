@@ -94,7 +94,9 @@ class CompilationEngine:
             self.compileSubroutineDec()
 
 
-        self.__consume(JackTokenizer.SYMBOL,'}')    
+        self.__consume(JackTokenizer.SYMBOL,'}')   
+
+        self.__vm.close() 
 
     @xml_decorator("classVarDec")
     def compileClassVarDec(self):
