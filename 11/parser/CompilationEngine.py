@@ -12,7 +12,7 @@ class CompilationEngine:
     #constants
     LOOP = "LOOP"
     LOOP_END = "LOOP_END"
-    IF = "IF_END"
+    IF_END = "IF_END"
     ELSE = "ELSE"
 
     binary_op_commands = {
@@ -69,7 +69,7 @@ class CompilationEngine:
         self.__class_name = ""
 
         #count for generating unique labels
-        self.__label_counts = {self.IF:0,self.ELSE:0,self.LOOP:0,self.LOOP_END:0}
+        self.__label_counts = {self.IF_END:0,self.ELSE:0,self.LOOP:0,self.LOOP_END:0}
         #bootstrap the compilation process
         if self.__tokenizer.advance():
             self.compileClass()
@@ -321,17 +321,26 @@ class CompilationEngine:
         # If negation is true, then the if-goto activates jumping 
         # past the if statments to the else statements.
         self.__vm.writeArithmetic('not')
-
+        label = self.__generateLabel(self.ELSE)
+        self.__vm.writeIf(label)
         self.__consume(JackTokenizer.SYMBOL,')')
         self.__consume(JackTokenizer.SYMBOL,'{')
         self.compileStatements()
         self.__consume(JackTokenizer.SYMBOL,"}")
 
         if self.__tokenizer.type == JackTokenizer.KEYWORD and self.__tokenizer.keyword() == 'else':
+            #write else label if here there is an else statement
+            #use IF_END for end of full block
+            #otherwise, else will be used as end of if block
+            self.__vm.writeLabel(label)
+            label = self.__generateLabel(self.IF_END)
             self.__consume(JackTokenizer.KEYWORD,'else')
             self.__consume(JackTokenizer.SYMBOL,'{')
             self.compileStatements()
             self.__consume(JackTokenizer.SYMBOL,'}')
+
+        # write the final label for the block
+        self.__vm.writeLabel(label)
 
     @xml_decorator("returnStatement")
     def compileReturn(self):
