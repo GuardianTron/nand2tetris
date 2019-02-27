@@ -353,13 +353,27 @@ class CompilationEngine:
 
     @xml_decorator("whileStatement")
     def compileWhile(self):
+        loop_label = self.__generateLabel(self.LOOP)
+        loop_end_label = self.__generateLabel(self.LOOP_END)
+        self.__vm.writeLabel(loop_label)
+        
         self.__consume(JackTokenizer.KEYWORD,'while')
         self.__consume(JackTokenizer.SYMBOL,'(')
         self.compileExpression()
         self.__consume(JackTokenizer.SYMBOL,')')
+
+        #if expression is false, jump to end of loop
+        self.__vm.writeArithmetic("not")
+        self.__vm.writeIf(loop_end_label)
+
         self.__consume(JackTokenizer.SYMBOL,'{')
         self.compileStatements()
         self.__consume(JackTokenizer.SYMBOL,'}')
+
+        #go back to start of the loop
+        self.__vm.writeGoto(loop_label)
+        #end loop block
+        self.__vm.writeLabel(loop_end_label)
 
     @xml_decorator("expressionList")
     def compileExpressionList(self):
