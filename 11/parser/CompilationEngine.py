@@ -239,6 +239,8 @@ class CompilationEngine:
     def compileDo(self):
         self.__consume(JackTokenizer.KEYWORD,"do")
         self.compileSubroutineCall()
+        #remove returned value from the stack
+        self.__vm.writePop("temp",0)
         self.__consume(JackTokenizer.SYMBOL,";")
     
     @xml_decorator("letStatement")
