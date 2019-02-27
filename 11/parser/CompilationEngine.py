@@ -12,7 +12,7 @@ class CompilationEngine:
     #constants
     LOOP = "LOOP"
     LOOP_END = "LOOP_END"
-    IF = "IF"
+    IF = "IF_END"
     ELSE = "ELSE"
 
     binary_op_commands = {
