@@ -9,6 +9,12 @@ class CompilationEngine:
     key_const = {'true','false','null','this'}
     ops = {'+','-','*','/','&','|','<','>','='}
 
+    #constants
+    LOOP = "LOOP"
+    LOOP_END = "LOOP_END"
+    IF = "IF"
+    ELSE = "ELSE"
+
     binary_op_commands = {
         "-":"sub",
         "+":"add",
@@ -27,6 +33,7 @@ class CompilationEngine:
         "-":"neg",
         "~":"not"
     }
+
 
     def xml_decorator(node_name):
         """ Adds xml generation code to called compilation objects.
@@ -61,7 +68,8 @@ class CompilationEngine:
         #the name of the current class
         self.__class_name = ""
 
-
+        #count for generating unique labels
+        self.__label_counts = {self.IF:0,self.ELSE:0,self.LOOP:0,self.LOOP_END:0}
         #bootstrap the compilation process
         if self.__tokenizer.advance():
             self.compileClass()
@@ -304,6 +312,16 @@ class CompilationEngine:
         self.__consume(JackTokenizer.KEYWORD,'if')
         self.__consume(JackTokenizer.SYMBOL,'(')
         self.compileExpression()
+
+        # Negate the expression.  If the original expression 
+        # is true, then negation will be false, resulting
+        # in excution skipping to next line. This will 
+        # result in the if statements executing, followed by a jump using 
+        # goto to jump over the else statements.
+        # If negation is true, then the if-goto activates jumping 
+        # past the if statments to the else statements.
+        self.__vm.writeArithmetic('not')
+
         self.__consume(JackTokenizer.SYMBOL,')')
         self.__consume(JackTokenizer.SYMBOL,'{')
         self.compileStatements()
@@ -376,7 +394,7 @@ class CompilationEngine:
             self.__vm.writePush("constant",len(string))
             self.__vm.writeCall("String.new",1)
             for char in string:
-                self.__vm.writePush("constant",ord(char))
+                self.__vm.writePush("constant",ord(char))https://my.freedompop.com/plan
                 self.__vm.writeCall("String.append",1)
                 self.__vm.writePop("temp",0)
 
@@ -543,6 +561,13 @@ class CompilationEngine:
             return self.__consume(JackTokenizer.KEYWORD,{'int','char','boolean'})
         else:
             return self.__consume(JackTokenizer.IDENTIFIER)
+
+    def __generateLabel(self,type):
+        label = type+str(self.__label_counts[type])
+        self.__label_counts[type] += 1
+        return label
+        
+
 
 
 
