@@ -121,6 +121,17 @@ class CompilationEngine:
     def compileSubroutineDec(self):
         self.__symbol_table.startSubroutine()
 
+        #handle special cases for setting up constructors and methods
+        subroutine_type = self.__tokenizer.token()
+        if self.__subroutine_type == "method":
+            #this must be the first argument to the method,so add to symbol table
+            self.__symbol_table.define("this",self.__class_name,SymbolTable.ARG)
+        elif self.__subroutine_type == "constructor":
+            #allocate memory and set up this pointer on stack
+            self.__vm.writeCall("Memory.alloc",self.__symbol_table.varCount(SymbolTable.FIELD))
+            self.__vm.writePop("pointer",0) 
+
+
         self.__consume(JackTokenizer.KEYWORD,{'constructor','method','function'})
 
         #handle return type
