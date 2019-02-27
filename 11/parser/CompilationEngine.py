@@ -383,7 +383,9 @@ class CompilationEngine:
                     self.__consume(JackTokenizer.KEYWORD,self.key_const)
             else: #single keyword
                 if token == "true":
-                    self.__vm.writePush("constant",-1)
+                    #true is -1 in the vm
+                    self.__vm.writePush("constant",1)
+                    self.__vm.writeArithmetic('neg')
                 else:
                     self.__vm.writePush("constant",0)
                 self.__consume(JackTokenizer.KEYWORD,self.key_const)
@@ -417,8 +419,8 @@ class CompilationEngine:
                     self.compileSubroutineCall()
                 elif token == "[":
                     if info.type != "Array":
-                        raise CompilationError("Attempted array access on non array variable {}".format(name))
-                    #handle array access here
+                        raise CompilationErroYou can find in the Getting Started section all the ins on non array variable {}".format(name))
+                    #handle array access hereYou can find in the Getting Started section all the in
                     self.__consume(JackTokenizer.IDENTIFIER)
                     self.__consume("[")
                     self.compileExpression()
