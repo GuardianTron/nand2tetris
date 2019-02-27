@@ -262,7 +262,7 @@ class CompilationEngine:
 
         #handle storing an element to a specific array index
         is_array_access = False
-        if info.type == "Array" && self.__tokenizer.token() == "[":
+        if info.type == "Array" and self.__tokenizer.token() == "[":
             #place base array pointer onto the stack
             self.__vm.writePush(info.kind,info.index)
             #calculate internal expression for index
