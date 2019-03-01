@@ -483,9 +483,9 @@ class CompilationEngine:
                         raise CompilationError("{} is not type Array".format(name))
                     #handle array access hereYou can find in the Getting Started section all the in
                     self.__consume(JackTokenizer.IDENTIFIER)
-                    self.__consume("[")
+                    self.__consume(JackTokenizer.SYMBOL,"[")
                     self.compileExpression()
-                    self.__consume("]")
+                    self.__consume(JackTokenizer.SYMBOL,"]")
                     self.__vm.writeArithmetic('add')
                     self.__vm.writePop("pointer",0)
                     self.__vm.writePush("that",0)
