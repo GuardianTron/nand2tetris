@@ -645,6 +645,7 @@ if __name__ == "__main__":
     #from xml.etree import ElementTree as ET
     try:
         for file in get_jack_files(argv[1]):
+            print(file)
             compiler = CompilationEngine(file)
             #xml = compiler.getXML()
             #with open(create_xml_path(file),'w') as doc:
