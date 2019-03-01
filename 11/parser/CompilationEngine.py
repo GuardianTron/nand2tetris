@@ -206,8 +206,7 @@ class CompilationEngine:
         #handle optional variable declarations.
         locals = 0
         while self.__tokenizer.token() == 'var':
-            locals +=1
-            self.compileVarDec()  
+            locals += self.compileVarDec()  
         self.__vm.writeFunction("{}.{}".format(self.__class_name,self.__function_name),locals)
         self.compileStatements()
              
@@ -216,7 +215,7 @@ class CompilationEngine:
 
     @xml_decorator("varDec")
     def compileVarDec(self):
-
+        num_vars = 1
         self.__consume(JackTokenizer.KEYWORD,'var')
         type = self.__consumeTypeDec()
         name = self.__consume(JackTokenizer.IDENTIFIER)
@@ -228,6 +227,7 @@ class CompilationEngine:
         self.__last_node.set('index',str(info.index))
         #handle multiple variables
         while self.__tokenizer.token() == ',':
+            num_vars += 1
             self.__consume(JackTokenizer.SYMBOL,',')
             name = self.__consume(JackTokenizer.IDENTIFIER)
             self.__symbol_table.define(name,type,SymbolTable.VAR)
@@ -238,6 +238,7 @@ class CompilationEngine:
 
         #finish declaration
         self.__consume(JackTokenizer.SYMBOL,';')
+        return num_vars
 
     @xml_decorator("statements")
     def compileStatements(self):
