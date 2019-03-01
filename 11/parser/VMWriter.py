@@ -1,6 +1,6 @@
 class VMWriter:
 
-    seg_types = {"CONST","ARG","STATIC","LOCAL","THIS","THAT","POINTER","TEMP"}
+    seg_types = {"CONSTANT","ARG","STATIC","LOCAL","THIS","THAT","POINTER","TEMP"}
     arithmetic_commands = {"ADD","SUB","NEG","EQ","GT","LT","AND","OR","NOT"}
 
 
