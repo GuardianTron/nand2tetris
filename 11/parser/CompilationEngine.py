@@ -475,7 +475,7 @@ class CompilationEngine:
             t_type = self.__tokenizer.type
             token = self.__tokenizer.token()
             self.__tokenizer.rewind() #rewind back to identifier for processing methods to consume
-            if t_type == JackTokenizer.SYMBOL: #handle array and function calls
+            if t_type == JackTokenizer.SYMBOL and (token in self.sub_call_op or token == "["): #handle array and function calls 
                 if token in self.sub_call_op: #handle method and function calls
                     self.compileSubroutineCall()
                 elif token == "[":
