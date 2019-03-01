@@ -6,3 +6,4 @@
 08/**/*.asm
 10/**/*test.xml
 10/**/*output.xml
+11/**/*.vm
