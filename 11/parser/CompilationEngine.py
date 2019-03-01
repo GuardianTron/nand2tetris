@@ -133,10 +133,10 @@ class CompilationEngine:
 
         #handle special cases for setting up constructors and methods
         subroutine_type = self.__tokenizer.token()
-        if self.__subroutine_type == "method":
+        if subroutine_type == "method":
             #this must be the first argument to the method,so add to symbol table
             self.__symbol_table.define("this",self.__class_name,SymbolTable.ARG)
-        elif self.__subroutine_type == "constructor":
+        elif subroutine_type == "constructor":
             #allocate memory and set up this pointer on stack
             self.__vm.writeCall("Memory.alloc",self.__symbol_table.varCount(SymbolTable.FIELD))
             self.__vm.writePop("pointer",0) 
@@ -269,7 +269,7 @@ class CompilationEngine:
         name = self.__tokenizer.identifier()
         self.__consume(JackTokenizer.IDENTIFIER)
 
-        info = self.__vm.varInfo(name)
+        info = self.__symbol_table.varInfo(name)
         
 
         #handle storing an element to a specific array index
@@ -419,7 +419,7 @@ class CompilationEngine:
             self.__vm.writePush("constant",len(string))
             self.__vm.writeCall("String.new",1)
             for char in string:
-                self.__vm.writePush("constant",ord(char))https://my.freedompop.com/plan
+                self.__vm.writePush("constant",ord(char))
                 self.__vm.writeCall("String.append",1)
                 self.__vm.writePop("temp",0)
 
@@ -462,6 +462,8 @@ class CompilationEngine:
             #####NOTE: Does not handle function calls on arrays!!!!!!#########
             #####NOTE: 2 Arrays are nontyped - no way for language to do this ########
             #handle pushing values/pointers onto the stack
+            #NOTE: If name not found in symbol table, assume class reference for 
+            #static method call
             name = self.__tokenizer.identifier()
             info = self.__symbol_table.varInfo(name)
             self.__vm.writePush(info.kind,info.index)
@@ -472,12 +474,12 @@ class CompilationEngine:
             t_type = self.__tokenizer.type
             token = self.__tokenizer.token()
             self.__tokenizer.rewind() #rewind back to identifier for processing methods to consume
-            if t_type == JackTokenizer.SYMBOL #handle array and function calls
+            if t_type == JackTokenizer.SYMBOL: #handle array and function calls
                 if token in self.sub_call_op: #handle method and function calls
                     self.compileSubroutineCall()
                 elif token == "[":
                     if info.type != "Array":
-                        raise CompilationErroYou can find in the Getting Started section all the ins on non array variable {}".format(name))
+                        raise CompilationError("{} is not type Array".format(name))
                     #handle array access hereYou can find in the Getting Started section all the in
                     self.__consume(JackTokenizer.IDENTIFIER)
                     self.__consume("[")
@@ -640,13 +642,13 @@ def create_xml_path(filename):
 
 if __name__ == "__main__":
     from sys import argv
-    from xml.etree import ElementTree as ET
+    #from xml.etree import ElementTree as ET
     try:
         for file in get_jack_files(argv[1]):
             compiler = CompilationEngine(file)
-            xml = compiler.getXML()
-            with open(create_xml_path(file),'w') as doc:
-                doc.write(ET.tostring(xml,'unicode'))     
+            #xml = compiler.getXML()
+            #with open(create_xml_path(file),'w') as doc:
+            #    doc.write(ET.tostring(xml,'unicode'))     
 
     except IOError as e:
         print(e)
