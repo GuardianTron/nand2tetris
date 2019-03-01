@@ -68,6 +68,9 @@ class CompilationEngine:
         #the name of the current class
         self.__class_name = ""
 
+        # name of the current function being defined
+        self.__function_name = ""
+
         #count for generating unique labels
         self.__label_counts = {self.IF_END:0,self.ELSE:0,self.LOOP:0,self.LOOP_END:0}
         #bootstrap the compilation process
@@ -150,7 +153,12 @@ class CompilationEngine:
         else:
             self.__consume(JackTokenizer.IDENTIFIER)
 
-        #handle function name
+        #handle function name 
+        #NOTE: Function declarations on the stack require both the function 
+        #Name and the number of local variables, the latter of which is parsed 
+        #in compileSubroutineBody.  Thus, save the function name and actually write the 
+        #vm code in compileSubroutineBody
+        self.__function_name = self.__tokenizer.identifier()
         self.__consume(JackTokenizer.IDENTIFIER)
 
         #handle expressions
@@ -196,9 +204,11 @@ class CompilationEngine:
         self.__consume(JackTokenizer.SYMBOL,'{')
 
         #handle optional variable declarations.
+        locals = 0
         while self.__tokenizer.token() == 'var':
+            locals +=1
             self.compileVarDec()  
-
+        self.__vm.writeFunction("{}.{}".format(self.__class_name,self.__function_name),locals)
         self.compileStatements()
              
 
