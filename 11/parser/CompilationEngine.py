@@ -466,7 +466,8 @@ class CompilationEngine:
             #static method call
             name = self.__tokenizer.identifier()
             info = self.__symbol_table.varInfo(name)
-            self.__vm.writePush(info.kind,info.index)
+            if info: #not in symbol table if identifier is a reference to the class
+                self.__vm.writePush(info.kind,info.index)
             
             #determine if there is a method call or array access
             self.__tokenizer.advance() 
