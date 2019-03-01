@@ -46,7 +46,7 @@ class CompilationEngine:
             def wrapper(self):
                 old_parent = self.__current_parent
                 self.__current_parent = SubElement(old_parent,node_name)
-                func(self)
+                return func(self)
                 self.__current_parent = old_parent
             return wrapper
         return decorator
@@ -453,9 +453,12 @@ class CompilationEngine:
             self.compileExpression()
             self.__consume(JackTokenizer.SYMBOL,')')
         elif t_type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() in self.unary_op: # example mathematical negation of an expression -- call term again
-            op = self.__tokenizer.symbol()
-            self.__consume(JackTokenizer.SYMBOL,self.unary_op)
+            op = self.__tokeni
+        """Compiles a list of expressions."""ol()
+            self.__consume(Jac
+        """Compiles a list of expressions."""er.SYMBOL,self.unary_op)
             self.compileTerm()
+        """Compiles a list of expressions."""
             self.__vm.writeArithmetic(self.unary_op_commands[op])
 
         elif t_type == JackTokenizer.IDENTIFIER: #can be a variable, array, or function call
