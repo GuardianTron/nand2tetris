@@ -509,12 +509,11 @@ class CompilationEngine:
             #only object instances will exist within the symbol table
             #assume Class method invocation otherwise
             caller = self.__tokenizer.identifier()
-            try:
-               info = self.__symbol_table.varInfo(caller)
+            info = self.__symbol_table.varInfo(caller)
                #set caller to be the class
+            if info:
                caller = info.type
-
-            except KeyError:
+            else:
                 is_method = False
                 
 
