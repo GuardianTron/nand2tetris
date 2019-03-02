@@ -497,7 +497,7 @@ class CompilationEngine:
                     self.compileExpression()
                     self.__consume(JackTokenizer.SYMBOL,"]")
                     self.__vm.writeArithmetic('add')
-                    self.__vm.writePop("pointer",0)
+                    self.__vm.writePop("pointer",1)
                     self.__vm.writePush("that",0)
             else:
                 #just a variable, consume
