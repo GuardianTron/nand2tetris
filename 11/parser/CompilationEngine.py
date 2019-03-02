@@ -21,7 +21,8 @@ class CompilationEngine:
         "<":"lt",
         ">":"gt",
         "&":"and",
-        "|":"or"
+        "|":"or",
+        "=":"eq"
     }
 
     binary_op_functions = {
