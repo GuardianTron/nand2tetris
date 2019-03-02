@@ -72,6 +72,10 @@ class CompilationEngine:
         # name of the current function being defined
         self.__function_name = ""
 
+        #type of subroutine being compiled.
+        #needs to be retained for constructors
+        self.__subroutine_type = ""
+
         #count for generating unique labels
         self.__label_counts = {self.IF_END:0,self.ELSE:0,self.LOOP:0,self.LOOP_END:0}
         #bootstrap the compilation process
@@ -135,15 +139,12 @@ class CompilationEngine:
     def compileSubroutineDec(self):
         self.__symbol_table.startSubroutine()
 
-        #handle special cases for setting up constructors and methods
-        subroutine_type = self.__tokenizer.token()
-        if subroutine_type == "method":
+        #handle special cases for setting up methods
+        #set up for constructors must be done within the body compilation.
+        self.__subroutine_type = self.__tokenizer.token()
+        if self.__subroutine_type == "method":
             #this must be the first argument to the method,so add to symbol table
             self.__symbol_table.define("this",self.__class_name,SymbolTable.ARG)
-        elif subroutine_type == "constructor":
-            #allocate memory and set up this pointer on stack
-            self.__vm.writeCall("Memory.alloc",self.__symbol_table.varCount(SymbolTable.FIELD))
-            self.__vm.writePop("pointer",0) 
 
 
         self.__consume(JackTokenizer.KEYWORD,{'constructor','method','function'})
@@ -209,6 +210,12 @@ class CompilationEngine:
         while self.__tokenizer.token() == 'var':
             locals += self.compileVarDec()  
         self.__vm.writeFunction("{}.{}".format(self.__class_name,self.__function_name),locals)
+        if self.__subroutine_type == "constructor":
+        #allocate memory and set up this pointer on stack
+            self.__vm.writePush("constant",self.__symbol_table.varCount(SymbolTable.FIELD))
+            self.__vm.writeCall("Memory.alloc",1)
+            self.__vm.writePop("pointer",0) 
+        
         self.compileStatements()
              
 
@@ -482,7 +489,7 @@ class CompilationEngine:
             #static method call
             name = self.__tokenizer.identifier()
             info = self.__symbol_table.varInfo(name)
-            if info: #not in symbol table if identifier is a reference to the class
+            if info: #not in symbol table if reference to class or method called on current instance
                 kind = info.kind
                 if kind == SymbolTable.FIELD:
                     kind = 'this'
@@ -548,6 +555,8 @@ class CompilationEngine:
             function = caller
             caller = self.__class_name
             is_method =True
+            #add in reference to this on stack as not handled by code.
+            self.__vm.writePush("pointer",0)
         #handle The code was developed against Pi 3 B, I have not tested on Pi 1. I think references to the name BCM2835 may be accidental, perhaps more accurate would be to call it BCM2837, although also possible that they sharethe actual function call portion -- Always runs
         self.__consume(JackTokenizer.SYMBOL,'(')
         args = self.compileExpressionList()
