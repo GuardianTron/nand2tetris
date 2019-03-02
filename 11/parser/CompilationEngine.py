@@ -374,6 +374,8 @@ class CompilationEngine:
         #not an emptry return, so compile expression
         if not (self.__tokenizer.type == JackTokenizer.SYMBOL and self.__tokenizer.symbol() == ';'):
             self.compileExpression()
+        else: #empty return, so provide a return of zero
+            self.__vm.writePush('constant',0)
         self.__vm.writeReturn()
         self.__consume(JackTokenizer.SYMBOL,';')
 
@@ -489,11 +491,11 @@ class CompilationEngine:
             #static method call
             name = self.__tokenizer.identifier()
             info = self.__symbol_table.varInfo(name)
+            kind = "class"
             if info: #not in symbol table if reference to class or method called on current instance
                 kind = info.kind
                 if kind == SymbolTable.FIELD:
                     kind = 'this'
-                self.__vm.writePush(kind,info.index)
             
             #determine if there is a method call or array access
             self.__tokenizer.advance() 
@@ -508,6 +510,7 @@ class CompilationEngine:
                     if info.type != "Array":
                         raise CompilationError("{} is not type Array".format(name))
                     #handle array access hereYou can find in the Getting Started section all the in
+                    self.__vm.writePush(kind,info.index)
                     self.__consume(JackTokenizer.IDENTIFIER)
                     self.__consume(JackTokenizer.SYMBOL,"[")
                     self.compileExpression()
@@ -517,6 +520,7 @@ class CompilationEngine:
                     self.__vm.writePush("that",0)
             else:
                 #just a variable, consume
+                self.__vm.writePush(kind,info.index)
                 self.__consume(JackTokenizer.IDENTIFIER)
             
     def compileSubroutineCall(self):
@@ -548,6 +552,14 @@ class CompilationEngine:
 
 
         if self.__tokenizer.token() == '.': #if method call, consume . and method name identifier
+            if is_method: 
+                #push reference to instance being invoked onto stack
+                if info:
+                    kind = info.kind
+                    if kind == 'field':
+                        kind = 'this'
+                    self.__vm.writePush(kind,info.index)
+
             self.__consume(JackTokenizer.SYMBOL,'.')
             function = self.__tokenizer.identifier()
             self.__consume(JackTokenizer.IDENTIFIER)
