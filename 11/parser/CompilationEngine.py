@@ -214,6 +214,10 @@ class CompilationEngine:
         #allocate memory and set up this pointer on stack
             self.__vm.writePush("constant",self.__symbol_table.varCount(SymbolTable.FIELD))
             self.__vm.writeCall("Memory.alloc",1)
+            self.__vm.writePop("pointer",0)
+        elif self.__subroutine_type == 'method':
+            #is a method, so set this pointer from argument zero
+            self.__vm.writePush("argument",0)
             self.__vm.writePop("pointer",0) 
         
         self.compileStatements()
