@@ -349,8 +349,10 @@ class CompilationEngine:
             #write else label if here there is an else statement
             #use IF_END for end of full block
             #otherwise, else will be used as end of if block
-            self.__vm.writeLabel(label)
+            label_else = label
             label = self.__generateLabel(self.IF_END)
+            self.__vm.writeGoto(label)
+            self.__vm.writeLabel(label_else)
             self.__consume(JackTokenizer.KEYWORD,'else')
             self.__consume(JackTokenizer.SYMBOL,'{')
             self.compileStatements()
