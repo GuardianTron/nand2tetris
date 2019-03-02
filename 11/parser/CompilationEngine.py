@@ -481,7 +481,10 @@ class CompilationEngine:
             name = self.__tokenizer.identifier()
             info = self.__symbol_table.varInfo(name)
             if info: #not in symbol table if identifier is a reference to the class
-                self.__vm.writePush(info.kind,info.index)
+                kind = info.kind
+                if kind == SymbolTable.FIELD:
+                    kind = 'this'
+                self.__vm.writePush(kind,info.index)
             
             #determine if there is a method call or array access
             self.__tokenizer.advance() 
