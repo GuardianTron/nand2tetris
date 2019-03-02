@@ -318,7 +318,10 @@ class CompilationEngine:
             self.__vm.writePop("that",0)
         else:
             #simply save to location in memory specified by symbol table.
-            self.__vm.writePop(info.kind,info.index)
+            kind = info.kind
+            if info.kind == SymbolTable.FIELD:
+                kind = "this"
+            self.__vm.writePop(kind,info.index)
 
     @xml_decorator("ifStatement")
     def compileIf(self):
@@ -536,6 +539,10 @@ class CompilationEngine:
             self.__consume(JackTokenizer.SYMBOL,'.')
             function = self.__tokenizer.identifier()
             self.__consume(JackTokenizer.IDENTIFIER)
+        else: #is a method called simply by the function name without invoking this
+            function = caller
+            caller = self.__class_name
+            is_method =True
         #handle The code was developed against Pi 3 B, I have not tested on Pi 1. I think references to the name BCM2835 may be accidental, perhaps more accurate would be to call it BCM2837, although also possible that they sharethe actual function call portion -- Always runs
         self.__consume(JackTokenizer.SYMBOL,'(')
         args = self.compileExpressionList()
